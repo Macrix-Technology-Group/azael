@@ -1,0 +1,3383 @@
+<!DOCTYPE html>
+<html lang="de" data-lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  // Set language BEFORE first paint to prevent flash. Default: de.
+  (function(){
+    try {
+      var l = localStorage.getItem('azael.lang') || 'de';
+      if (l !== 'de' && l !== 'en') l = 'de';
+      document.documentElement.setAttribute('data-lang', l);
+      document.documentElement.setAttribute('lang', l);
+    } catch(e) {}
+  })();
+</script>
+<title>Azael — He sees everything. He tells only you.</title>
+<style>
+/* azael.css — design tokens, inlined for portability */
+/* ============================================================
+   Azael — Design Tokens
+   Charcoal-black + burnt copper + cold ash
+   Type: Lato (Macrix family, self-hosted)
+   ============================================================ */
+
+@font-face { font-family:'Lato'; font-weight:100; font-style:normal;
+  src: url('./fonts/Lato-Hairline.ttf') format('truetype'); font-display:swap; }
+@font-face { font-family:'Lato'; font-weight:300; font-style:normal;
+  src: url('./fonts/Lato-Light.ttf') format('truetype'); font-display:swap; }
+@font-face { font-family:'Lato'; font-weight:400; font-style:normal;
+  src: url('./fonts/Lato-Regular.ttf') format('truetype'); font-display:swap; }
+@font-face { font-family:'Lato'; font-weight:400; font-style:italic;
+  src: url('./fonts/Lato-Italic.ttf') format('truetype'); font-display:swap; }
+@font-face { font-family:'Lato'; font-weight:500; font-style:normal;
+  src: url('./fonts/Lato-Medium.ttf') format('truetype'); font-display:swap; }
+@font-face { font-family:'Lato'; font-weight:700; font-style:normal;
+  src: url('./fonts/Lato-Bold.ttf') format('truetype'); font-display:swap; }
+@font-face { font-family:'Lato'; font-weight:900; font-style:normal;
+  src: url('./fonts/Lato-Black.ttf') format('truetype'); font-display:swap; }
+@font-face { font-family:'Lato'; font-weight:900; font-style:italic;
+  src: url('./fonts/Lato-BlackItalic.ttf') format('truetype'); font-display:swap; }
+
+:root {
+  /* Core palette — charcoal, copper, ash */
+  --az-black:    #0a0908;     /* near-black, warm-shifted */
+  --az-coal:     #14110f;     /* surfaces */
+  --az-soot:     #1c1916;     /* raised cards on coal */
+  --az-iron:     #2b2723;     /* borders on dark */
+  --az-graphite: #3a3530;     /* dividers */
+
+  --az-copper:   #c97a3f;     /* primary accent — burnt copper */
+  --az-copper-bright: #e09360;
+  --az-copper-deep:   #8b4f24;
+  --az-copper-ink:    #6b3a18;
+
+  --az-ash:      #a89c8a;     /* warm ash — muted text on dark */
+  --az-bone:     #d9d2c5;     /* off-white */
+  --az-paper:    #ece6d8;     /* the "letter" surface */
+  --az-paper-deep: #d8cfb9;
+
+  /* Narrative-arc palette — time-of-day registers */
+  --az-sky:      #f3ece0;     /* upper cream sky */
+  --az-sand:     #c9b896;     /* warm sand for horizon, mid-day */
+  --az-amber:    #b89668;     /* deep desert noon */
+  --az-dust:     #8a8070;     /* muted text on cream */
+  --az-stone:    #4a3f33;     /* deep text on cream */
+  --az-charcoal-cream: #1a1612; /* primary text on cream */
+  --az-gold:     #d4a85a;     /* dawn highlight, sigil glow */
+  --az-sage:     #7a8c6e;     /* the oasis note */
+  --az-sage-deep:#5a6b50;     /* darker sage */
+  --az-dusk:     #3a2e23;     /* amber-charcoal dusk */
+
+  /* Semantic */
+  --bg:           var(--az-black);
+  --bg-alt:       var(--az-coal);
+  --surface:      var(--az-coal);
+  --surface-raised: var(--az-soot);
+
+  --fg:           var(--az-bone);
+  --fg-strong:    #f3ece0;
+  --fg-muted:     var(--az-ash);
+  --fg-subtle:    #6f655a;
+
+  --accent:       var(--az-copper);
+  --accent-hover: var(--az-copper-bright);
+  --accent-deep:  var(--az-copper-deep);
+
+  --border:       var(--az-iron);
+  --border-strong:var(--az-graphite);
+  --hairline:     1px solid var(--border);
+
+  /* Type */
+  --font-sans: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --fw-hairline: 100;
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-bold:     700;
+  --fw-black:    900;
+
+  --tracking-caps: 0.18em;
+  --tracking-wide: 0.06em;
+
+  /* Layout (slide-fixed) */
+  --safe: 96px;        /* outer margin on a 1920×1080 slide */
+  --gutter: 48px;
+}
+
+/* ===== Base ===== */
+html, body { background: var(--bg); color: var(--fg); }
+body { font-family: var(--font-sans); font-weight: var(--fw-regular); }
+
+deck-stage { background: #050403; }
+deck-stage::part(thumb-rail) { background: #050403; }
+
+deck-stage > section {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Slide chrome — corner mark */
+.az-corner {
+  position: absolute;
+  top: 56px; left: var(--safe);
+  display: flex; align-items: center; gap: 14px;
+  font-size: 14px; letter-spacing: var(--tracking-caps);
+  text-transform: uppercase; color: var(--fg-muted);
+  font-weight: var(--fw-bold);
+}
+.az-corner .sigil { width: 22px; height: 22px; }
+.az-corner-right {
+  position: absolute;
+  top: 56px; right: var(--safe);
+  font-size: 12px; letter-spacing: var(--tracking-caps);
+  text-transform: uppercase; color: var(--fg-subtle);
+  font-weight: var(--fw-bold);
+}
+.az-foot {
+  position: absolute; bottom: 56px; left: var(--safe); right: var(--safe);
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12px; letter-spacing: var(--tracking-caps);
+  text-transform: uppercase; color: var(--fg-subtle);
+  font-weight: var(--fw-bold);
+}
+.az-foot em { font-style: normal; color: var(--accent); }
+
+.eyebrow {
+  font-size: 14px;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+  display: inline-flex; align-items: center; gap: 16px;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 56px; height: 2px;
+  background: var(--accent);
+}
+
+.eyebrow.muted { color: var(--fg-muted); }
+.eyebrow.muted::before { background: var(--fg-subtle); }
+
+/* Display headline — Lato Black 900, tight */
+h1, h2, h3, p { margin: 0; }
+
+.h-display {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-black);
+  font-size: 144px;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--fg-strong);
+}
+.h-display .light { font-weight: var(--fw-light); color: var(--fg-muted); }
+.h-display .copper { color: var(--accent); }
+
+.h-1 {
+  font-weight: var(--fw-black);
+  font-size: 96px;
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  color: var(--fg-strong);
+}
+.h-1 .light { font-weight: var(--fw-light); color: var(--fg-muted); }
+.h-1 .copper { color: var(--accent); }
+
+.h-2 {
+  font-weight: var(--fw-black);
+  font-size: 64px;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--fg-strong);
+}
+.h-2 .light { font-weight: var(--fw-light); color: var(--fg-muted); }
+.h-2 .copper { color: var(--accent); }
+
+.h-3 {
+  font-weight: var(--fw-bold);
+  font-size: 36px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--fg-strong);
+}
+
+.lead {
+  font-size: 28px;
+  font-weight: var(--fw-light);
+  line-height: 1.45;
+  color: var(--fg-muted);
+  max-width: 22ch;
+}
+
+.body-lg { font-size: 22px; line-height: 1.5; color: var(--fg); font-weight: var(--fw-regular); }
+.body    { font-size: 18px; line-height: 1.55; color: var(--fg); }
+.small   { font-size: 14px; line-height: 1.5; color: var(--fg-muted); }
+.caption { font-size: 12px; line-height: 1.4; color: var(--fg-subtle); letter-spacing: var(--tracking-caps); text-transform: uppercase; font-weight: var(--fw-bold); }
+
+.de { font-style: italic; color: var(--fg-muted); }
+.de.tight { font-style: italic; color: var(--az-ash); }
+
+.copper { color: var(--accent); }
+.bone   { color: var(--fg-strong); }
+.ash    { color: var(--fg-muted); }
+
+.mono { font-family: var(--font-mono); }
+
+/* The copper rule — Azael's signature */
+.rule-cu {
+  display: inline-block;
+  width: 96px; height: 2px;
+  background: var(--accent);
+}
+.rule-cu.long { width: 240px; }
+.rule-cu.short { width: 56px; }
+
+/* Hairline isometric grid background — extremely subtle */
+.iso-grid {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(transparent 0, transparent calc(100% - 1px), rgba(168,156,138,0.04) 100%),
+    linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), rgba(168,156,138,0.04) 100%);
+  background-size: 96px 96px;
+}
+
+/* Grain texture */
+.grain {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.5; mix-blend-mode: overlay;
+  background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* Copper vignette (used on cover) */
+.cu-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% 70%, rgba(201,122,63,0.18), transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(139,79,36,0.12), transparent 55%);
+}
+
+/* Slow-blink "vigil" dot */
+@keyframes vigil {
+  0%, 60% { opacity: 1; }
+  80% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+.vigil-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(201,122,63,0.7);
+  animation: vigil 3s ease-in-out infinite;
+  display: inline-block;
+}
+
+</style>
+<template id="__bundler_thumbnail" data-bg-color="#0a0908">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0a0908"/>
+    <g transform="translate(600 400)" fill="none" stroke="#c97a3f" stroke-width="2">
+      <circle r="180" opacity="0.25"/>
+      <circle r="120" opacity="0.5"/>
+      <circle r="60" opacity="0.85"/>
+      <circle r="6" fill="#c97a3f" stroke="none"/>
+    </g>
+    <text x="600" y="680" text-anchor="middle" fill="#d9d2c5" font-family="Lato, sans-serif" font-weight="900" font-size="64" letter-spacing="8">AZAEL</text>
+  </svg>
+</template>
+<style>
+  /* Reset deck-stage assumptions for a scrolling page */
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-weight: var(--fw-regular);
+    line-height: 1.5;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 0 64px; }
+
+  /* === Top nav bar === */
+  .nav {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(10,9,8,0.78);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav .row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 0;
+  }
+  .nav .mark {
+    display: flex; align-items: center; gap: 12px;
+    font-weight: var(--fw-black);
+    letter-spacing: var(--tracking-caps);
+    font-size: 14px;
+    color: var(--fg-strong);
+  }
+  .nav .mark svg { color: var(--accent); }
+  .nav .mark .brand-stack {
+    display: flex; flex-direction: column;
+    gap: 3px; line-height: 1;
+  }
+  .nav .mark .brand-endorse {
+    font-weight: var(--fw-light);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: none;
+    color: var(--fg-subtle);
+    font-style: italic;
+  }
+  .nav .links {
+    display: flex; gap: 36px; align-items: center;
+    font-size: 13px; letter-spacing: var(--tracking-wide);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-muted);
+  }
+  .nav .links a {
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color .2s var(--ease-std, ease);
+  }
+  .nav .links a:hover { color: var(--accent); }
+  .nav .vigil {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    color: var(--fg-subtle); font-weight: var(--fw-bold);
+  }
+
+  /* === Hero === */
+  .hero {
+    position: relative;
+    padding: 120px 0 140px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(201,122,63,0.18), transparent 70%),
+      radial-gradient(ellipse 40% 40% at 95% 80%, rgba(139,79,36,0.14), transparent 65%);
+  }
+  .hero .iso-grid-soft {
+    position: absolute; inset: 0; pointer-events: none;
+    opacity: 0.35;
+    background-image:
+      linear-gradient(transparent 0, transparent calc(100% - 1px), rgba(168,156,138,0.05) 100%),
+      linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), rgba(168,156,138,0.05) 100%);
+    background-size: 96px 96px;
+  }
+  .hero .row {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 72px;
+    align-items: center;
+  }
+  .hero .eyebrow {
+    margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-weight: var(--fw-black);
+    font-size: 96px;
+    line-height: 0.94;
+    letter-spacing: -0.035em;
+    color: var(--fg-strong);
+    margin: 0 0 36px;
+  }
+  .hero h1 .copper { color: var(--accent); display: block; }
+  .hero h1 .light { color: var(--fg-muted); font-weight: var(--fw-light); display: block; }
+  .hero .lede {
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--fg-muted);
+    font-weight: var(--fw-light);
+    max-width: 30ch;
+    margin: 0 0 40px;
+  }
+  .hero .ctas {
+    display: flex; gap: 16px; align-items: center;
+    flex-wrap: wrap;
+  }
+  .hero .de-line {
+    margin-top: 56px;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--az-ash);
+    font-weight: var(--fw-light);
+    border-left: 1px solid var(--accent);
+    padding-left: 20px;
+    max-width: 38ch;
+  }
+
+  .hero-art {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 520px;
+    margin-left: auto;
+    justify-self: end;
+  }
+  .hero-art .ring {
+    position: absolute; inset: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+  }
+  .hero-art .ring.r2 { inset: 12%; border-color: rgba(201,122,63,0.18); }
+  .hero-art .ring.r3 { inset: 26%; border-color: rgba(201,122,63,0.32); }
+  .hero-art .ring.r4 { inset: 38%; border-color: rgba(201,122,63,0.5); }
+  .hero-art .horizon {
+    position: absolute;
+    left: -10%; right: -10%; top: 50%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,122,63,0.6) 30%, rgba(201,122,63,0.6) 70%, transparent);
+  }
+  .hero-art .sigil-big {
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 56%; height: 56%;
+    color: var(--accent);
+    filter: drop-shadow(0 0 40px rgba(201,122,63,0.35));
+  }
+  .hero-art .tick {
+    position: absolute; width: 1px; height: 18px;
+    background: var(--accent); top: 0; left: 50%; transform-origin: 50% 260px;
+  }
+  .hero-art .corner-mark {
+    position: absolute; bottom: -8px; right: 0;
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-subtle);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  /* === Buttons === */
+  .btn {
+    display: inline-flex; align-items: center; gap: 14px;
+    padding: 20px 32px;
+    font-weight: var(--fw-bold);
+    font-size: 14px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    border-radius: 0;
+    border: 1px solid var(--accent);
+    text-decoration: none;
+    cursor: pointer;
+    background: var(--accent);
+    color: var(--az-black);
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+    font-family: inherit;
+  }
+  .btn:hover {
+    background: var(--az-copper-bright);
+    border-color: var(--az-copper-bright);
+  }
+  .btn .arrow {
+    width: 14px; height: 1px;
+    background: currentColor;
+    position: relative;
+    transition: width .2s ease;
+  }
+  .btn .arrow::after {
+    content: '';
+    position: absolute; right: 0; top: -3px;
+    width: 7px; height: 7px;
+    border-top: 1px solid currentColor;
+    border-right: 1px solid currentColor;
+    transform: rotate(45deg);
+  }
+  .btn:hover .arrow { width: 22px; }
+
+  .btn.ghost {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--border-strong);
+  }
+  .btn.ghost:hover {
+    color: var(--fg-strong);
+    border-color: var(--accent);
+    background: transparent;
+  }
+
+  /* === Section scaffolding === */
+  section.block {
+    padding: 140px 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  section.block.alt {
+    background: var(--az-coal);
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 0.6fr 0.4fr;
+    gap: 64px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .section-head h2 {
+    font-weight: var(--fw-black);
+    font-size: 64px; line-height: 0.98;
+    letter-spacing: -0.025em;
+    color: var(--fg-strong);
+    margin: 12px 0 0;
+    max-width: 16ch;
+  }
+  .section-head h2 .copper { color: var(--accent); }
+  .section-head .meta {
+    font-size: 16px; color: var(--fg-muted);
+    line-height: 1.55; max-width: 32ch;
+    font-weight: var(--fw-light);
+  }
+
+  /* === Problem section === */
+  .problem .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--border);
+  }
+  .problem .stat {
+    padding: 40px 36px 12px 0;
+    border-right: 1px solid var(--border);
+  }
+  .problem .stat:last-child { border-right: 0; padding-right: 0; }
+  .problem .stat .num {
+    font-weight: var(--fw-black);
+    font-size: 80px; line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .problem .stat .lbl {
+    margin-top: 14px;
+    font-size: 16px; line-height: 1.5;
+    color: var(--fg-muted);
+  }
+  .problem .stat .lbl strong { color: var(--fg-strong); font-weight: var(--fw-bold); }
+  .problem .source {
+    margin-top: 28px;
+    font-size: 11px; color: var(--fg-subtle);
+    letter-spacing: var(--tracking-caps); text-transform: uppercase;
+    font-weight: var(--fw-bold);
+  }
+
+  /* === Story section === */
+  .story .frame {
+    display: grid;
+    grid-template-columns: 0.45fr 0.55fr;
+    gap: 64px;
+  }
+  .story .copy h3 {
+    font-weight: var(--fw-black);
+    font-size: 48px; line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--fg-strong);
+    margin: 0 0 24px;
+  }
+  .story .copy h3 .copper { color: var(--accent); }
+  .story .copy .moment {
+    font-style: italic;
+    font-weight: var(--fw-light);
+    font-size: 19px; line-height: 1.5;
+    color: var(--fg-muted);
+    max-width: 34ch;
+    margin: 0 0 24px;
+  }
+  .story .copy .moment .strike {
+    text-decoration: line-through;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+  }
+  .story .copy .annotation {
+    font-size: 12px; color: var(--fg-subtle);
+    letter-spacing: var(--tracking-caps); text-transform: uppercase;
+    font-weight: var(--fw-bold);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .story .copy .annotation::before {
+    content: ''; display: block; width: 24px; height: 1px; background: var(--accent);
+  }
+  .story .scene {
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .chat {
+    background: #0a0908;
+    border: 1px solid var(--border);
+    padding: 22px 26px;
+  }
+  .chat.dashed { background: transparent; border-style: dashed; }
+  .chat .meta {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 11px; letter-spacing: var(--tracking-caps); text-transform: uppercase;
+    color: var(--fg-subtle); font-weight: var(--fw-bold);
+  }
+  .chat .body-text {
+    font-size: 15px; line-height: 1.55; color: var(--fg);
+    font-family: var(--font-mono);
+  }
+  .chat .leak {
+    background: rgba(201,122,63,0.18);
+    border-bottom: 2px solid var(--accent);
+    padding: 0 4px;
+    color: var(--fg-strong);
+  }
+  .chat.dashed .body-text { color: var(--fg-muted); font-style: italic; }
+  .chat.dashed em { color: var(--fg); font-style: italic; }
+
+  /* === Redaction stream === */
+  .redact .stream {
+    display: grid;
+    grid-template-columns: 1fr 96px 1fr;
+    border: 1px solid var(--border);
+    background: #0a0908;
+  }
+  .redact .pipe {
+    padding: 32px 36px;
+    border-right: 1px solid var(--border);
+  }
+  .redact .pipe:last-child { border-right: 0; }
+  .redact .pipe .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px;
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-subtle);
+  }
+  .redact .pipe .head .tag { color: var(--accent); }
+  .redact .pipe .text {
+    font-family: var(--font-mono);
+    font-size: 16px; line-height: 1.6;
+    color: var(--fg);
+  }
+  .redact .pipe .text .secret {
+    background: rgba(201,122,63,0.22);
+    border-bottom: 2px solid var(--accent);
+    color: var(--fg-strong);
+    padding: 0 3px;
+  }
+  .redact .pipe .text .replaced {
+    color: var(--accent);
+    background: rgba(201,122,63,0.10);
+    border-bottom: 2px dashed var(--accent);
+    padding: 0 3px;
+  }
+  .redact .gate {
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(201,122,63,0.30), transparent 65%),
+      var(--az-soot);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px;
+  }
+  .redact .gate svg { width: 44px; height: 44px; color: var(--accent); }
+  .redact .gate .lbl {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--accent);
+  }
+  .redact .footnote {
+    margin-top: 32px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px;
+    font-size: 14px; color: var(--fg-muted); line-height: 1.5;
+  }
+  .redact .footnote strong {
+    display: block; margin-bottom: 6px;
+    color: var(--accent); font-weight: var(--fw-bold);
+    font-size: 11px; letter-spacing: var(--tracking-caps); text-transform: uppercase;
+  }
+
+  /* === Monday letter === */
+  .letter .layout {
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr;
+    gap: 96px;
+    align-items: start;
+  }
+  .letter .lead-col h3 {
+    font-weight: var(--fw-black);
+    font-size: 56px; line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--fg-strong);
+    margin: 16px 0 28px;
+  }
+  .letter .lead-col h3 .copper { color: var(--accent); }
+  .letter .lead-col p {
+    font-size: 19px; line-height: 1.55;
+    color: var(--fg-muted);
+    font-weight: var(--fw-light);
+    max-width: 32ch;
+    margin: 0 0 24px;
+  }
+  .letter .lead-col p strong { color: var(--fg); font-weight: var(--fw-bold); }
+  .letter .pull {
+    margin-top: 32px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    font-size: 12px; letter-spacing: var(--tracking-caps);
+    color: var(--fg-subtle); font-weight: var(--fw-bold);
+    text-transform: uppercase;
+  }
+  .letter .pull strong { color: var(--accent); }
+
+  .paper {
+    background: var(--az-paper);
+    color: #1a1612;
+    padding: 48px 52px;
+    border-radius: 4px;
+    box-shadow:
+      0 30px 60px -20px rgba(0,0,0,0.65),
+      0 10px 20px -10px rgba(0,0,0,0.4);
+    position: relative;
+    transform: rotate(-0.4deg);
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(0,0,0,0.05), transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(0,0,0,0.06), transparent 60%);
+  }
+  .paper .head {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(0,0,0,0.18);
+    padding-bottom: 16px; margin-bottom: 28px;
+  }
+  .paper .head .mark {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: var(--fw-black);
+    font-size: 13px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; color: #1a1612;
+  }
+  .paper .head .mark svg { color: var(--accent-deep); }
+  .paper .head .ts {
+    font-size: 10px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: #6b6258;
+  }
+  .paper .salutation {
+    font-size: 15px; color: #3a322a;
+    font-weight: var(--fw-medium); margin-bottom: 14px;
+  }
+  .paper table.report {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 18px;
+    font-size: 13px;
+  }
+  .paper table.report thead th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+    color: #6b6258;
+    padding: 0 0 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+  .paper table.report thead th.num,
+  .paper table.report tbody td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .paper table.report tbody td {
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.10);
+    color: #1a1612;
+    font-weight: var(--fw-regular);
+  }
+  .paper table.report tbody tr.hi td { color: var(--accent-deep); font-weight: var(--fw-bold); }
+  .paper table.report tbody tr.tot td {
+    border-bottom: 0;
+    border-top: 1px solid rgba(0,0,0,0.25);
+    font-weight: var(--fw-bold);
+    padding-top: 10px;
+  }
+  .paper table.report td.lbl { color: #1a1612; }
+  .paper table.report td.note {
+    font-size: 11px; color: #6b6258; font-style: italic;
+  }
+  .paper .case {
+    margin: 6px 0 14px;
+    padding: 12px 14px;
+    border-left: 2px solid var(--accent-deep);
+    background: rgba(139,79,36,0.06);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .paper .case .id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #6b6258;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .paper p {
+    font-size: 15px; line-height: 1.55; color: #1a1612;
+    margin: 0 0 14px;
+  }
+  .paper .redact {
+    background: #1a1612; color: #1a1612;
+    padding: 0 6px; user-select: none;
+    letter-spacing: -0.04em;
+  }
+  .paper .name { font-weight: var(--fw-bold); color: #1a1612; }
+  .paper em { font-style: italic; color: #4a3f33; }
+  .paper .question {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(0,0,0,0.14);
+    font-style: italic;
+    font-size: 16px; color: #2a2118;
+  }
+  .paper .sign {
+    margin-top: 28px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .paper .signed {
+    font-style: italic;
+    font-weight: var(--fw-black);
+    font-size: 28px; color: var(--accent-deep);
+    letter-spacing: -0.01em;
+  }
+  .paper .role {
+    text-align: right;
+    font-size: 9px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: #6b6258;
+  }
+
+  /* === Who is Azael === */
+  .who .layout {
+    display: grid;
+    grid-template-columns: 0.55fr 0.45fr;
+    gap: 64px;
+  }
+  .who .card {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 40px 44px;
+    position: relative;
+    display: flex; flex-direction: column; gap: 28px;
+  }
+  .who .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; background: var(--accent);
+  }
+  .who .card .head {
+    display: flex; align-items: center; gap: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+  .who .card .head svg { width: 52px; height: 52px; color: var(--accent); }
+  .who .card .head .name {
+    font-weight: var(--fw-black);
+    font-size: 44px; line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--fg-strong);
+  }
+  .who .card .head .role {
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--accent);
+    margin-top: 8px;
+  }
+  .who .card .stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 22px 28px;
+  }
+  .who .card .stat .lbl {
+    font-size: 10px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-subtle); margin-bottom: 6px;
+  }
+  .who .card .stat .val {
+    font-size: 16px; line-height: 1.4; color: var(--fg);
+    font-weight: var(--fw-medium);
+  }
+  .who .card .stat .val .copper { color: var(--accent); }
+  .who .card .oath {
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+    font-style: italic;
+    font-size: 17px; line-height: 1.5;
+    color: var(--az-ash);
+    font-weight: var(--fw-light);
+  }
+  .who .card .oath::before {
+    content: '— ';
+    color: var(--accent);
+    font-style: normal; font-weight: var(--fw-bold);
+  }
+
+  .who .myth h3 {
+    font-weight: var(--fw-black);
+    font-size: 48px; line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--fg-strong);
+    margin: 16px 0 24px;
+  }
+  .who .myth h3 .copper { color: var(--accent); }
+  .who .myth .gospel {
+    font-style: italic;
+    font-weight: var(--fw-light);
+    font-size: 19px; line-height: 1.55;
+    color: var(--fg-muted);
+    border-left: 2px solid var(--accent);
+    padding-left: 24px;
+    margin: 0 0 32px;
+    max-width: 36ch;
+  }
+  .who .myth .voice .pair {
+    display: grid; grid-template-columns: 80px 1fr;
+    gap: 20px; align-items: baseline;
+    border-bottom: 1px dashed var(--border);
+    padding: 12px 0;
+  }
+  .who .myth .voice .pair .k {
+    font-size: 10px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-subtle);
+  }
+  .who .myth .voice .pair .v { font-size: 15px; color: var(--fg); }
+  .who .myth .voice .pair .v .yes { color: var(--accent); font-weight: var(--fw-bold); }
+  .who .myth .voice .pair .v .no { color: var(--fg-subtle); text-decoration: line-through; }
+
+  /* === Sectors === */
+  .sectors .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .sectors .seg {
+    background: var(--bg);
+    padding: 32px 28px;
+    display: flex; flex-direction: column; gap: 16px;
+    min-height: 280px;
+  }
+  .sectors .seg.lead { background: var(--az-soot); }
+  .sectors .seg .num {
+    font-size: 10px; letter-spacing: var(--tracking-caps);
+    color: var(--fg-subtle); font-weight: var(--fw-bold);
+  }
+  .sectors .seg.lead .num { color: var(--accent); }
+  .sectors .seg .name {
+    font-weight: var(--fw-black);
+    font-size: 26px; line-height: 1;
+    color: var(--fg-strong);
+    letter-spacing: -0.01em;
+  }
+  .sectors .seg.lead .name { color: var(--accent); }
+  .sectors .seg .what {
+    font-size: 14px; line-height: 1.5;
+    color: var(--fg-muted);
+  }
+  .sectors .seg .threat {
+    margin-top: auto;
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-subtle);
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .sectors .seg .threat strong {
+    color: var(--fg); display: block;
+    margin-top: 4px; font-size: 13px;
+    letter-spacing: 0; text-transform: none;
+  }
+
+  /* === Final CTA === */
+  .final {
+    padding: 160px 0 140px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .final::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(201,122,63,0.18), transparent 70%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(139,79,36,0.14), transparent 70%);
+  }
+  .final .inner { position: relative; z-index: 1; }
+  .final .sigil-large {
+    width: 72px; height: 72px;
+    color: var(--accent);
+    margin: 0 auto 40px;
+    display: block;
+    opacity: 0.95;
+  }
+  .final h2 {
+    font-weight: var(--fw-black);
+    font-size: 96px; line-height: 0.94;
+    letter-spacing: -0.035em;
+    color: var(--fg-strong);
+    margin: 0 0 28px;
+  }
+  .final h2 .copper { color: var(--accent); display: block; }
+  .final h2 .light { color: var(--fg-muted); font-weight: var(--fw-light); display: block; }
+  .final .de-line {
+    margin: 32px auto 56px;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--az-ash);
+    font-weight: var(--fw-light);
+    max-width: 32ch;
+  }
+  .final .de-line::before, .final .de-line::after {
+    content: ''; display: inline-block;
+    width: 40px; height: 1px;
+    background: var(--accent);
+    vertical-align: middle;
+    margin: 0 16px;
+  }
+  .final .ctas {
+    display: flex; gap: 16px; justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* === Footer === */
+  footer.foot {
+    padding: 56px 0 64px;
+    background: #050403;
+  }
+  footer.foot .row {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 24px;
+  }
+  footer.foot .mark {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; letter-spacing: var(--tracking-caps);
+    font-weight: var(--fw-bold); color: var(--fg-muted);
+  }
+  footer.foot .mark svg { color: var(--accent); }
+  footer.foot .legal {
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; color: var(--fg-subtle);
+    font-weight: var(--fw-bold);
+  }
+
+  /* === Contact modal === */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(5,4,3,0.78);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 32px;
+    opacity: 0;
+    transition: opacity .25s var(--ease-std, ease);
+  }
+  .modal-backdrop.open {
+    display: flex; opacity: 1;
+  }
+  .contact-card {
+    background: var(--az-coal);
+    border: 1px solid var(--border);
+    max-width: 880px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 0.55fr 0.45fr;
+    position: relative;
+    transform: translateY(12px);
+    transition: transform .3s var(--ease-out, ease);
+    box-shadow:
+      0 40px 80px -20px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(201,122,63,0.15);
+  }
+  .modal-backdrop.open .contact-card { transform: translateY(0); }
+  .contact-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; background: var(--accent);
+  }
+  .contact-card .photo {
+    background: #000;
+    overflow: hidden;
+    position: relative;
+    min-height: 460px;
+  }
+  .contact-card .photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    filter: grayscale(0.15) contrast(1.05) brightness(0.95);
+  }
+  .contact-card .photo::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, transparent 60%, rgba(10,9,8,0.5) 100%),
+      linear-gradient(90deg, rgba(20,17,15,0.25), transparent 30%);
+    pointer-events: none;
+  }
+  .contact-card .photo .photo-tag {
+    position: absolute; bottom: 24px; left: 24px;
+    font-size: 10px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-strong);
+    display: flex; align-items: center; gap: 10px;
+    z-index: 2;
+  }
+  .contact-card .photo .photo-tag::before {
+    content: ''; display: block;
+    width: 28px; height: 1px;
+    background: var(--accent);
+  }
+
+  .contact-card .body {
+    padding: 40px 44px 36px;
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .contact-card .eyebrow { margin-bottom: 4px; font-size: 11px; }
+  .contact-card .name {
+    font-weight: var(--fw-black);
+    font-size: 38px; line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--fg-strong);
+  }
+  .contact-card .role {
+    margin-top: 6px;
+    font-size: 13px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--accent);
+  }
+  .contact-card .lines {
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .contact-card .ln {
+    display: grid; grid-template-columns: 60px 1fr;
+    gap: 16px; align-items: baseline;
+  }
+  .contact-card .ln .k {
+    font-size: 10px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-subtle);
+  }
+  .contact-card .ln .v {
+    font-size: 16px; color: var(--fg-strong);
+    font-weight: var(--fw-medium);
+  }
+  .contact-card .ln .v a {
+    color: var(--fg-strong);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    transition: color .15s ease;
+  }
+  .contact-card .ln .v a:hover { color: var(--accent); }
+  .contact-card .ln .v .small {
+    display: block; margin-top: 2px;
+    font-size: 13px; color: var(--fg-muted); font-weight: var(--fw-regular);
+  }
+  .contact-card .org {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    font-size: 13px; line-height: 1.55;
+    color: var(--fg-muted);
+  }
+  .contact-card .org strong { color: var(--fg-strong); font-weight: var(--fw-bold); }
+  .contact-card .org .sub {
+    display: block; margin-top: 4px;
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; color: var(--fg-subtle);
+    font-weight: var(--fw-bold);
+  }
+  .contact-card .close {
+    position: absolute; top: 16px; right: 16px;
+    width: 36px; height: 36px;
+    border: 1px solid var(--border);
+    background: rgba(20,17,15,0.6);
+    color: var(--fg-muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-family: inherit;
+    transition: color .15s ease, border-color .15s ease;
+    z-index: 5;
+  }
+  .contact-card .close:hover { color: var(--accent); border-color: var(--accent); }
+  .contact-card .close svg { width: 14px; height: 14px; }
+
+  /* === Responsive === */
+  @media (max-width: 1100px) {
+    .wrap { padding: 0 40px; }
+    .hero h1, .final h2 { font-size: 72px; }
+    .hero .row { grid-template-columns: 1fr; gap: 64px; }
+    .hero-art { margin: 0 auto; }
+    .section-head { grid-template-columns: 1fr; gap: 24px; }
+    .section-head h2 { font-size: 48px; }
+    .story .frame, .letter .layout, .who .layout { grid-template-columns: 1fr; gap: 56px; }
+    .sectors .grid { grid-template-columns: repeat(2, 1fr); }
+    .redact .footnote { grid-template-columns: repeat(2, 1fr); }
+    .contact-card { grid-template-columns: 1fr; }
+    .contact-card .photo { min-height: 280px; }
+  }
+  @media (max-width: 700px) {
+    .wrap { padding: 0 24px; }
+    .nav .links { display: none; }
+    .hero { padding: 80px 0 100px; }
+    .hero h1 { font-size: 52px; }
+    section.block { padding: 96px 0; }
+    .final { padding: 96px 0; }
+    .final h2 { font-size: 52px; }
+    .problem .stat-row { grid-template-columns: 1fr; }
+    .problem .stat { border-right: 0; border-bottom: 1px solid var(--border); padding: 28px 0; }
+    .redact .stream { grid-template-columns: 1fr; }
+    .redact .pipe { border-right: 0; border-bottom: 1px solid var(--border); }
+    .redact .gate { min-height: 80px; padding: 20px; }
+    .redact .gate .lbl { writing-mode: horizontal-tb; transform: none; }
+    .redact .footnote { grid-template-columns: 1fr; gap: 20px; }
+    .sectors .grid { grid-template-columns: 1fr; }
+    .who .myth .voice .pair { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+<style>
+  /* ============================================================
+     ADDITIONS — three visual moves
+       1. Hero LLM chip wall ("any model your org sanctions")
+       2. Mechanic section: two-path routing (frontier / local)
+       3. @Azael: conversational section
+     Charcoal / copper / ash palette unchanged.
+     ============================================================ */
+
+  /* === MOVE 2: Hero LLM chip wall ============================== */
+  .hero .chip-wall {
+    margin-top: 56px;
+    max-width: 600px;
+  }
+  .hero .chip-wall .chip-eyebrow {
+    font-size: 11px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .hero .chip-wall .chip-eyebrow::before {
+    content: ''; display: inline-block;
+    width: 28px; height: 1px; background: var(--accent);
+  }
+  .hero .chip-row {
+    position: relative;
+    display: flex; align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    padding: 14px 0;
+  }
+  .hero .chip-row::before {
+    content: '';
+    position: absolute;
+    left: 8px; right: 8px;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(201,122,63,0.45) 12%,
+      rgba(201,122,63,0.55) 88%,
+      transparent 100%);
+    z-index: 0;
+  }
+  .hero .chip {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center;
+    padding: 5px 9px;
+    border: 1px solid rgba(201,122,63,0.35);
+    background: var(--az-black);
+    color: var(--fg-muted);
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-radius: 999px;
+  }
+  .hero .chip.future {
+    color: var(--fg-subtle);
+    border-style: dashed;
+    border-color: rgba(201,122,63,0.28);
+  }
+  .hero .chip.azael {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--az-black);
+    padding: 5px 11px 5px 8px;
+    gap: 6px;
+  }
+  .hero .chip.azael svg {
+    width: 12px; height: 12px; color: var(--az-black);
+  }
+  .hero .chip-arrow {
+    flex: 0 0 auto;
+    width: 10px;
+    color: rgba(201,122,63,0.55);
+    font-size: 10px;
+    text-align: center;
+    user-select: none;
+  }
+  .hero .chip-row .chip-arrow.last { color: var(--accent); }
+  .hero .chip-note {
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--fg-muted);
+    font-weight: var(--fw-light);
+    max-width: 46ch;
+  }
+  .hero .chip-note strong {
+    color: var(--fg);
+    font-weight: var(--fw-bold);
+  }
+  /* Pull the German tagline closer once the chip wall is present */
+  .hero .chip-wall + .de-line { margin-top: 40px; }
+
+  /* === MOVE 1: Two-path routing in the Mechanic section ======== */
+  .redact.dual .stream {
+    grid-template-columns: 1fr 96px 1fr;
+    align-items: stretch;
+  }
+  .redact.dual .pipe.input { display: flex; flex-direction: column; }
+  .redact.dual .gate { padding: 28px 18px; }
+  .redact.dual .gate .pick {
+    margin-top: 8px;
+    font-size: 9px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-subtle);
+    text-align: center; line-height: 1.3;
+  }
+  .redact.dual .gate .pick strong { color: var(--accent); display: block; }
+
+  .redact.dual .paths {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 0;
+  }
+  .redact.dual .paths .pipe {
+    border-bottom: 1px solid var(--border);
+    border-right: 0;
+    padding: 28px 32px;
+    display: flex; flex-direction: column; gap: 16px;
+    position: relative;
+  }
+  .redact.dual .paths .pipe:last-child { border-bottom: 0; }
+  .redact.dual .path-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 10px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--accent);
+  }
+  .redact.dual .path-tag .key {
+    display: inline-flex;
+    width: 22px; height: 22px;
+    align-items: center; justify-content: center;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: var(--fw-bold);
+    letter-spacing: 0;
+  }
+  .redact.dual .path-tag .name {
+    color: var(--fg-strong); font-weight: var(--fw-black);
+    letter-spacing: 0.04em;
+  }
+  .redact.dual .path-tag .name .quiet {
+    color: var(--fg-subtle); font-weight: var(--fw-bold);
+    margin-left: 8px;
+  }
+  .redact.dual .path-line {
+    font-family: var(--font-mono);
+    font-size: 14.5px; line-height: 1.55;
+    color: var(--fg);
+  }
+  .redact.dual .path-line .replaced {
+    color: var(--accent);
+    background: rgba(201,122,63,0.10);
+    border-bottom: 2px dashed var(--accent);
+    padding: 0 3px;
+  }
+  .redact.dual .path-line .secret {
+    background: rgba(201,122,63,0.22);
+    border-bottom: 2px solid var(--accent);
+    color: var(--fg-strong);
+    padding: 0 3px;
+  }
+  .redact.dual .path-foot {
+    margin-top: auto;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    font-size: 11px; color: var(--fg-muted);
+    line-height: 1.4;
+  }
+  .redact.dual .path-foot .verdict {
+    font-style: italic;
+    color: var(--fg-muted);
+    max-width: 26ch;
+  }
+  .redact.dual .brand-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 10px;
+    border: 1px solid rgba(201,122,63,0.35);
+    background: rgba(20,17,15,0.8);
+    color: var(--fg);
+    font-size: 10px; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .redact.dual .brand-chip .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .redact.dual .brand-chip .dot.local {
+    background: var(--fg-muted);
+  }
+
+  /* === MOVE 3: @Azael conversational section =================== */
+  section.block.talk .layout {
+    display: grid;
+    grid-template-columns: 0.45fr 0.55fr;
+    gap: 72px;
+    align-items: start;
+  }
+  section.block.talk .copy p {
+    font-size: 18px; line-height: 1.6;
+    color: var(--fg-muted);
+    font-weight: var(--fw-light);
+    max-width: 36ch;
+    margin: 0 0 24px;
+  }
+  section.block.talk .copy p strong {
+    color: var(--fg);
+    font-weight: var(--fw-bold);
+  }
+  section.block.talk .copy .triggers {
+    margin-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--fg-subtle);
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  section.block.talk .copy .triggers strong {
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+    margin-bottom: 4px;
+  }
+  section.block.talk .copy .triggers code {
+    color: var(--fg);
+  }
+  section.block.talk .uses {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  section.block.talk .uses li {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 18px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 15px; line-height: 1.5;
+    color: var(--fg);
+  }
+  section.block.talk .uses li:last-child { border-bottom: 0; }
+  section.block.talk .uses li .k {
+    font-size: 10px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--accent);
+  }
+  section.block.talk .uses li .v { color: var(--fg); }
+  section.block.talk .uses li .v em {
+    color: var(--fg-muted);
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+  }
+
+  section.block.talk .thread {
+    display: flex; flex-direction: column;
+    gap: 18px;
+  }
+  section.block.talk .msg {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 22px 26px 24px;
+    position: relative;
+  }
+  section.block.talk .msg .head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+    font-size: 11px; letter-spacing: var(--tracking-caps);
+    text-transform: uppercase; font-weight: var(--fw-bold);
+    color: var(--fg-subtle);
+  }
+  section.block.talk .msg.user .head .who {
+    color: var(--fg);
+  }
+  section.block.talk .msg .body-text {
+    font-family: var(--font-mono);
+    font-size: 14.5px; line-height: 1.65;
+    color: var(--fg);
+  }
+  section.block.talk .msg.user .body-text .trigger {
+    color: var(--accent);
+    font-weight: var(--fw-bold);
+  }
+  section.block.talk .msg.user .body-text .protected {
+    background: rgba(201,122,63,0.18);
+    border-bottom: 2px solid var(--accent);
+    color: var(--fg-strong);
+    padding: 0 3px;
+  }
+
+  /* Azael's voice — copper left-bar + character typography */
+  section.block.talk .msg.azael {
+    border-left: 3px solid var(--accent);
+    padding-left: 28px;
+    background:
+      linear-gradient(90deg, rgba(201,122,63,0.06) 0%, transparent 30%),
+      var(--bg);
+  }
+  section.block.talk .msg.azael .head .who {
+    color: var(--accent);
+    font-weight: var(--fw-black);
+    letter-spacing: 0.06em;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  section.block.talk .msg.azael .head .who svg {
+    width: 14px; height: 14px;
+  }
+  section.block.talk .msg.azael .body-text {
+    font-family: var(--font-sans);
+    font-size: 16px; line-height: 1.55;
+    color: var(--fg-strong);
+    font-weight: var(--fw-regular);
+  }
+  section.block.talk .msg.azael .body-text .pa,
+  section.block.talk .msg.azael .body-text .pb {
+    color: var(--accent);
+    font-weight: var(--fw-bold);
+  }
+  section.block.talk .msg.azael .body-text em {
+    color: var(--fg-muted);
+    font-style: italic;
+  }
+  section.block.talk .msg.azael .sign {
+    margin-top: 14px;
+    font-style: italic;
+    font-weight: var(--fw-black);
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+
+  /* Responsive — chip wall, two-path mechanic, talk columns ===== */
+  @media (max-width: 1100px) {
+    section.block.talk .layout { grid-template-columns: 1fr; gap: 56px; }
+    .redact.dual .stream { grid-template-columns: 1fr; }
+    .redact.dual .pipe.input,
+    .redact.dual .paths .pipe { border-right: 0; border-bottom: 1px solid var(--border); }
+    .redact.dual .gate { min-height: 80px; padding: 20px; }
+    .redact.dual .gate .lbl { writing-mode: horizontal-tb; transform: none; }
+  }
+  @media (max-width: 700px) {
+    .hero .chip-row { flex-wrap: wrap; row-gap: 8px; }
+    .hero .chip-row::before { display: none; }
+    .hero .chip-arrow { display: none; }
+    .hero .chip-wall { max-width: 100%; }
+  }
+</style>
+<style>
+  /* ============================================================
+     NARRATIVE-ARC PALETTE — twelve hours of desert lighting.
+     Section-scoped overrides. Global :root tokens unchanged.
+     ============================================================ */
+
+  /* ---------- HERO · DAWN ---------- */
+  header.hero#top {
+    background:
+      linear-gradient(180deg,
+        var(--az-sky)    0%,
+        var(--az-paper) 38%,
+        var(--az-paper-deep) 70%,
+        var(--az-sand) 100%);
+    color: var(--az-charcoal-cream);
+    border-bottom: 1px solid rgba(201,122,63,0.18);
+  }
+  header.hero#top::before {
+    background:
+      radial-gradient(ellipse 60% 35% at 30% 100%, rgba(201,122,63,0.20), transparent 70%),
+      radial-gradient(ellipse 70% 45% at 50% 105%, rgba(212,168,90,0.32), transparent 70%),
+      radial-gradient(ellipse 60% 35% at 75% 100%, rgba(201,122,63,0.18), transparent 70%);
+    mix-blend-mode: normal;
+  }
+  header.hero#top .iso-grid-soft {
+    background-image:
+      linear-gradient(rgba(184,168,136,0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184,168,136,0.18) 1px, transparent 1px);
+  }
+  header.hero#top h1 { color: var(--az-charcoal-cream); }
+  header.hero#top h1 .light { color: var(--az-dust); }
+  header.hero#top .lede { color: var(--az-stone); }
+  header.hero#top .de-line { color: #6b6258; border-left-color: var(--accent); }
+  header.hero#top .btn {
+    background: var(--accent); color: var(--az-sky); border-color: transparent;
+  }
+  header.hero#top .btn:hover { background: #b8923f; color: var(--az-sky); }
+  header.hero#top .btn.ghost {
+    background: transparent; color: var(--accent); border: 1px solid #8a7355;
+  }
+  header.hero#top .btn.ghost:hover { border-color: var(--accent); color: var(--az-charcoal-cream); }
+  header.hero#top .ring.r1 { border-color: #b8a888; }
+  header.hero#top .ring.r2 { border-color: rgba(201,122,63,0.25); }
+  header.hero#top .ring.r3 { border-color: rgba(201,122,63,0.40); }
+  header.hero#top .ring.r4 { border-color: rgba(201,122,63,0.65); }
+  header.hero#top .horizon {
+    height: 2px;
+    background: linear-gradient(90deg,
+      transparent, var(--accent) 12%, var(--az-gold) 50%, var(--accent) 88%, transparent);
+  }
+  header.hero#top .sigil-big {
+    color: var(--accent);
+    filter: drop-shadow(0 0 50px rgba(212,168,90,0.45));
+  }
+  header.hero#top .corner-mark { color: #8a8070; }
+  header.hero#top .hero-art .iso-grid-soft { display: none; }
+  header.hero#top .hero-art {
+    background: radial-gradient(ellipse 55% 55% at 50% 50%,
+      rgba(243,236,224,0.78), transparent 70%);
+  }
+  /* Chip wall on cream */
+  header.hero#top .chip-wall .chip-eyebrow { color: var(--accent); }
+  header.hero#top .chip-wall .chip-row::before {
+    background: linear-gradient(90deg, transparent, rgba(201,122,63,0.55) 20%, rgba(201,122,63,0.55) 80%, transparent);
+  }
+  header.hero#top .chip-wall .chip {
+    background: rgba(243,236,224,0.7);
+    color: var(--az-stone);
+    border-color: rgba(201,122,63,0.45);
+  }
+  header.hero#top .chip-wall .chip.future { color: var(--az-dust); border-style: dashed; }
+  header.hero#top .chip-wall .chip.azael {
+    background: var(--accent); color: var(--az-sky); border-color: var(--accent);
+  }
+  header.hero#top .chip-wall .chip-arrow { color: rgba(201,122,63,0.7); }
+  header.hero#top .chip-wall .chip-note { color: var(--az-dust); }
+  header.hero#top .chip-wall .chip-note strong { color: var(--az-charcoal-cream); }
+
+  /* ---------- PROBLEM · DEEP NIGHT ---------- */
+  section.problem {
+    background: var(--az-black);
+    border-top: 1px solid rgba(201,122,63,0.35);
+    border-bottom: 1px solid rgba(43,39,35,0.6);
+  }
+  section.problem::before { display: none; }
+  section.problem .stat .num { font-size: 96px; line-height: 1; }
+  @media (max-width: 700px) { section.problem .stat .num { font-size: 64px; } }
+
+  /* ---------- STORY · DEEPER NIGHT ---------- */
+  section.story {
+    background: #14110f;
+  }
+  section.story .leak,
+  section.story .secret {
+    background: rgba(201,122,63,0.18);
+    border-bottom: 1px solid var(--accent);
+    padding: 0 2px;
+  }
+
+  /* ---------- MECHANIC · DAWN BREAKING ---------- */
+  section.redact#mechanic {
+    background:
+      linear-gradient(180deg,
+        var(--az-sky) 0%,
+        var(--az-paper) 45%,
+        var(--az-paper-deep) 80%,
+        var(--az-sand) 100%);
+    color: var(--az-charcoal-cream);
+    border-top: 1px solid rgba(201,122,63,0.45);
+  }
+  section.redact#mechanic .section-head h2 { color: var(--az-charcoal-cream); }
+  section.redact#mechanic .section-head .meta { color: var(--az-stone); }
+  section.redact#mechanic .section-head .eyebrow { color: var(--accent); }
+
+  /* Input pipe on cream */
+  section.redact#mechanic .stream .pipe.input {
+    background: rgba(243,236,224,0.6);
+    border: 1px solid rgba(184,168,136,0.7);
+    color: var(--az-charcoal-cream);
+  }
+  section.redact#mechanic .stream .pipe.input .head {
+    color: var(--az-stone);
+    border-bottom-color: rgba(184,168,136,0.5);
+  }
+  section.redact#mechanic .stream .pipe.input .head .tag { color: var(--accent); }
+  section.redact#mechanic .stream .pipe.input .text { color: var(--az-charcoal-cream); }
+  section.redact#mechanic .stream .pipe.input .secret {
+    background: rgba(201,122,63,0.18);
+    border-bottom: 1px solid var(--accent);
+    color: var(--az-stone);
+  }
+
+  /* The gate column — copper-gold radial */
+  section.redact#mechanic .stream .gate {
+    background:
+      radial-gradient(ellipse 70% 70% at 50% 50%, rgba(212,168,90,0.35), transparent 70%),
+      radial-gradient(ellipse 50% 50% at 50% 50%, rgba(201,122,63,0.25), transparent 70%);
+    border: 1px solid rgba(201,122,63,0.45);
+    border-radius: 6px;
+  }
+  section.redact#mechanic .stream .gate .lbl { color: var(--accent); }
+  section.redact#mechanic .stream .gate svg { color: var(--accent); filter: drop-shadow(0 0 24px rgba(212,168,90,0.5)); }
+  section.redact#mechanic .stream .gate .pick { color: var(--az-stone); }
+  section.redact#mechanic .stream .gate .pick strong { color: var(--accent); }
+
+  /* Two output paths */
+  section.redact#mechanic .paths .pipe {
+    background: rgba(243,236,224,0.65);
+    color: var(--az-charcoal-cream);
+  }
+  section.redact#mechanic .paths .pipe:nth-child(1) {
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 0 1px rgba(201,122,63,0.10) inset;
+  }
+  section.redact#mechanic .paths .pipe:nth-child(2) {
+    border: 1px solid var(--az-sage);
+    box-shadow: 0 0 0 1px rgba(122,140,110,0.12) inset;
+  }
+  section.redact#mechanic .paths .pipe .path-tag .key {
+    color: var(--az-sky);
+    background: var(--accent);
+  }
+  section.redact#mechanic .paths .pipe:nth-child(2) .path-tag .key {
+    background: var(--az-sage-deep);
+  }
+  section.redact#mechanic .paths .pipe .path-tag .name { color: var(--az-charcoal-cream); }
+  section.redact#mechanic .paths .pipe .path-tag .quiet { color: var(--az-dust); }
+  section.redact#mechanic .paths .pipe .path-line { color: var(--az-charcoal-cream); }
+  section.redact#mechanic .paths .pipe .replaced {
+    color: var(--accent);
+    background: rgba(201,122,63,0.10);
+    border-bottom: 1px dotted var(--accent);
+  }
+  section.redact#mechanic .paths .pipe:nth-child(2) .secret {
+    background: rgba(122,140,110,0.18);
+    border-bottom: 1px solid var(--az-sage-deep);
+    color: var(--az-stone);
+  }
+  section.redact#mechanic .paths .pipe .path-foot { color: var(--az-dust); border-top-color: rgba(184,168,136,0.5); }
+  section.redact#mechanic .paths .pipe .brand-chip {
+    color: var(--az-stone);
+    border-color: rgba(201,122,63,0.45);
+    background: rgba(243,236,224,0.5);
+  }
+  section.redact#mechanic .paths .pipe:nth-child(2) .brand-chip {
+    border-color: rgba(122,140,110,0.55);
+  }
+  section.redact#mechanic .paths .pipe .brand-chip .dot { background: var(--accent); }
+  section.redact#mechanic .paths .pipe .brand-chip .dot.local { background: var(--az-sage); }
+  section.redact#mechanic .paths .pipe .verdict { color: var(--az-stone); }
+
+  /* Diverging arrows from gate */
+  section.redact#mechanic .stream::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+  section.redact#mechanic .stream { position: relative; }
+
+  /* Footnote on cream */
+  section.redact#mechanic .footnote {
+    border-top: 1px solid rgba(184,168,136,0.6);
+    color: var(--az-charcoal-cream);
+  }
+  section.redact#mechanic .footnote > div { color: var(--az-charcoal-cream); }
+  section.redact#mechanic .footnote strong { color: var(--az-dust); }
+
+  /* ---------- LETTER · FULL MORNING ---------- */
+  section.block.letter#letter {
+    background: var(--az-paper);
+    color: var(--az-charcoal-cream);
+    border-top: 1px solid rgba(184,168,136,0.4);
+  }
+  section.block.letter#letter .section-head h2 { color: var(--az-charcoal-cream); }
+  section.block.letter#letter .section-head .meta { color: var(--az-stone); }
+  section.block.letter#letter .section-head .eyebrow { color: var(--accent); }
+  section.block.letter#letter .lead p { color: var(--az-stone); }
+  section.block.letter#letter .pull { color: var(--az-dust); }
+  section.block.letter#letter .pull strong, section.block.letter#letter .pull em { color: var(--accent); }
+
+  /* ---------- @AZAEL · TALK · FULL MORNING ---------- */
+  section.talk#talk {
+    background: var(--az-paper);
+    color: var(--az-charcoal-cream);
+    border-top: 1px solid rgba(184,168,136,0.4);
+  }
+  section.talk#talk .section-head h2 { color: var(--az-charcoal-cream); }
+  section.talk#talk .section-head .meta { color: var(--az-stone); }
+  section.talk#talk .section-head .eyebrow { color: var(--accent); }
+  section.talk#talk .copy p { color: var(--az-stone); }
+  section.talk#talk .copy p strong { color: var(--az-charcoal-cream); }
+  section.talk#talk .uses li { border-color: rgba(184,168,136,0.5); background: rgba(243,236,224,0.5); }
+  section.talk#talk .uses li .k { color: var(--accent); }
+  section.talk#talk .uses li .v { color: var(--az-charcoal-cream); }
+  section.talk#talk .uses li .v em { color: var(--az-dust); }
+  section.talk#talk .triggers {
+    background: rgba(243,236,224,0.55);
+    border-color: rgba(184,168,136,0.6);
+    color: var(--az-charcoal-cream);
+  }
+  section.talk#talk .triggers strong { color: var(--accent); }
+  section.talk#talk .triggers code { color: var(--az-charcoal-cream); }
+  section.talk#talk .msg.user {
+    background: var(--az-sky);
+    border: 1px solid rgba(184,168,136,0.6);
+    color: var(--az-charcoal-cream);
+  }
+  section.talk#talk .msg.user .head { color: var(--az-dust); border-bottom-color: rgba(184,168,136,0.5); }
+  section.talk#talk .msg.user .body-text { color: var(--az-charcoal-cream); }
+  section.talk#talk .msg.user .trigger { color: var(--accent); font-weight: var(--fw-bold); }
+  section.talk#talk .msg.user .protected {
+    background: rgba(201,122,63,0.18);
+    border-bottom: 1px solid var(--accent);
+  }
+  section.talk#talk .msg.azael {
+    background: var(--az-sky);
+    border: 1px solid rgba(184,168,136,0.55);
+    border-left: 3px solid var(--az-sage);
+    color: var(--az-charcoal-cream);
+  }
+  section.talk#talk .msg.azael .head .who { color: var(--accent); }
+  section.talk#talk .msg.azael .head { color: var(--az-dust); border-bottom-color: rgba(184,168,136,0.5); }
+  section.talk#talk .msg.azael .body-text { color: var(--az-stone); font-family: Georgia, "Times New Roman", serif; }
+  section.talk#talk .msg.azael .body-text em { color: var(--az-dust); }
+  section.talk#talk .msg.azael .pa { color: var(--accent); font-weight: var(--fw-bold); }
+  section.talk#talk .msg.azael .pb { color: var(--az-sage-deep); font-weight: var(--fw-bold); }
+  section.talk#talk .msg.azael .sign { color: var(--accent); }
+
+  /* ---------- WHO · MID-DAY DESERT SUN ---------- */
+  section.who {
+    background:
+      linear-gradient(180deg, var(--az-sand) 0%, var(--az-amber) 100%);
+    color: var(--az-charcoal-cream);
+    border-top: 1px solid rgba(184,168,136,0.6);
+  }
+  section.who .section-head h2 { color: var(--az-charcoal-cream); }
+  section.who .section-head .meta { color: var(--az-stone); }
+  section.who .section-head .eyebrow { color: #5a3f1f; }
+  section.who .card {
+    background: var(--az-paper);
+    border-top: 3px solid var(--accent);
+    box-shadow: 0 24px 60px rgba(58,46,35,0.35), 0 2px 8px rgba(58,46,35,0.18);
+    color: var(--az-charcoal-cream);
+  }
+  section.who .card .head svg {
+    color: var(--accent);
+    filter: drop-shadow(0 0 20px rgba(212,168,90,0.55));
+  }
+  section.who .card .head .name { color: var(--az-charcoal-cream); }
+  section.who .card .head .role { color: var(--az-dust); }
+  section.who .card .stat { border-color: rgba(184,168,136,0.5); }
+  section.who .card .stat .lbl { color: var(--az-dust); }
+  section.who .card .stat .val { color: var(--az-charcoal-cream); }
+  section.who .card .oath { color: var(--az-stone); }
+
+  /* ---------- SECTORS · DUSK ---------- */
+  section.block.sectors#sectors {
+    background: var(--az-dusk);
+    color: var(--az-bone);
+    border-top: 1px solid rgba(201,122,63,0.30);
+  }
+  section.block.sectors#sectors .section-head h2 { color: var(--az-bone); }
+  section.block.sectors#sectors .section-head .meta { color: var(--az-ash); }
+  section.block.sectors#sectors .seg {
+    background: #14110f;
+    border-color: rgba(201,122,63,0.18);
+  }
+  section.block.sectors#sectors .seg.lead {
+    background: var(--az-soot);
+    border-color: rgba(201,122,63,0.50);
+  }
+
+  /* ---------- FINAL · DAWN RETURNING ---------- */
+  section.final#contact {
+    background:
+      linear-gradient(180deg,
+        var(--az-sky) 0%,
+        var(--az-paper) 45%,
+        var(--az-paper-deep) 80%,
+        var(--az-sand) 100%);
+    color: var(--az-charcoal-cream);
+    border-top: 1px solid rgba(201,122,63,0.45);
+    border-bottom: 1px solid rgba(58,46,35,0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  section.final#contact::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 65% 45% at 50% 100%, rgba(212,168,90,0.40), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 50% 105%, rgba(201,122,63,0.30), transparent 70%);
+    pointer-events: none;
+  }
+  section.final#contact .inner { position: relative; z-index: 1; }
+  section.final#contact .sigil-large {
+    color: var(--accent);
+    filter: drop-shadow(0 0 60px rgba(212,168,90,0.55));
+  }
+  section.final#contact h2 { color: var(--az-charcoal-cream); }
+  section.final#contact h2 .light { color: var(--az-dust); }
+  section.final#contact .de-line { color: var(--az-dust); }
+  section.final#contact .btn {
+    background: var(--accent); color: var(--az-sky); border-color: transparent;
+  }
+  section.final#contact .btn:hover { background: #b8923f; color: var(--az-sky); }
+  section.final#contact .btn.ghost {
+    background: transparent; color: var(--accent); border: 1px solid #8a7355;
+  }
+  section.final#contact .btn.ghost:hover { border-color: var(--accent); color: var(--az-charcoal-cream); }
+  /* Sage-green oasis flourish under the CTAs */
+  section.final#contact .ctas::after {
+    content: "";
+    display: block;
+    width: 64px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--az-sage), transparent);
+    margin: 28px auto 0;
+    grid-column: 1 / -1;
+  }
+  section.final#contact .ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  section.final#contact .ctas > .btn { margin-bottom: 0; }
+  section.final#contact .ctas > * + * { margin-top: 12px; }
+
+  /* ---------- FOOTER · DEEP NIGHT (already dark; reinforce) ---------- */
+  footer.foot {
+    background: #050403;
+    border-top: 1px solid rgba(201,122,63,0.18);
+  }
+
+  /* ---------- MOBILE softening ---------- */
+  @media (max-width: 700px) {
+    header.hero#top, section.redact#mechanic, section.final#contact {
+      background-attachment: scroll;
+    }
+  }
+</style>
+<style>
+  /* ============================================================
+     CONTINUOUS NIGHT → SUN ARC.
+     The page is one long vertical gradient. Each section is a
+     thin slice; section ends meet so the transition is seamless.
+     Top of page = deepest night. Bottom = full sun.
+     Overrides everything above by source order + specificity.
+     ============================================================ */
+
+  /* ---------- HERO · DEEPEST NIGHT, warming hint at the floor ---------- */
+  header.hero#top {
+    background:
+      linear-gradient(180deg,
+        #050403   0%,
+        #0a0807  45%,
+        #14100c 80%,
+        #1c140e 100%);
+    color: var(--fg);
+    border-bottom: none;
+  }
+  header.hero#top::before {
+    background:
+      radial-gradient(ellipse 65% 30% at 30% 100%, rgba(201,122,63,0.22), transparent 70%),
+      radial-gradient(ellipse 55% 25% at 75% 100%, rgba(212,168,90,0.18), transparent 70%);
+  }
+  header.hero#top .iso-grid-soft {
+    background-image:
+      linear-gradient(rgba(168,156,138,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(168,156,138,0.05) 1px, transparent 1px);
+  }
+  header.hero#top h1 { color: var(--az-bone); }
+  header.hero#top h1 .light { color: var(--az-ash); }
+  header.hero#top .lede { color: var(--az-ash); }
+  header.hero#top .de-line { color: var(--az-ash); }
+  header.hero#top .btn {
+    background: var(--accent); color: #0a0908; border-color: transparent;
+  }
+  header.hero#top .btn:hover { background: #d68a4f; color: #0a0908; }
+  header.hero#top .btn.ghost {
+    background: transparent; color: var(--az-bone); border: 1px solid rgba(201,122,63,0.5);
+  }
+  header.hero#top .btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
+  header.hero#top .ring.r1 { border-color: rgba(168,156,138,0.10); }
+  header.hero#top .ring.r2 { border-color: rgba(168,156,138,0.18); }
+  header.hero#top .ring.r3 { border-color: rgba(201,122,63,0.30); }
+  header.hero#top .ring.r4 { border-color: rgba(201,122,63,0.55); }
+  header.hero#top .horizon {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--az-gold) 50%, var(--accent) 70%, transparent);
+  }
+  header.hero#top .sigil-big {
+    color: var(--accent);
+    filter: drop-shadow(0 0 50px rgba(212,168,90,0.40));
+  }
+  header.hero#top .corner-mark { color: var(--az-dust); }
+  header.hero#top .hero-art { background: transparent; }
+  header.hero#top .chip-wall .chip-eyebrow { color: var(--accent); }
+  header.hero#top .chip-wall .chip-row::before {
+    background: linear-gradient(90deg, transparent, rgba(201,122,63,0.55) 20%, rgba(201,122,63,0.55) 80%, transparent);
+  }
+  header.hero#top .chip-wall .chip {
+    background: rgba(10,9,8,0.6);
+    color: var(--az-ash);
+    border-color: rgba(201,122,63,0.35);
+  }
+  header.hero#top .chip-wall .chip.future { color: var(--az-dust); border-style: dashed; }
+  header.hero#top .chip-wall .chip.azael {
+    background: var(--accent); color: #0a0908; border-color: var(--accent);
+  }
+  header.hero#top .chip-wall .chip-arrow { color: rgba(201,122,63,0.55); }
+  header.hero#top .chip-wall .chip-note { color: var(--az-ash); }
+  header.hero#top .chip-wall .chip-note strong { color: var(--az-bone); }
+
+  /* ---------- PROBLEM · NIGHT, warming ---------- */
+  section.problem {
+    background: linear-gradient(180deg, #1c140e 0%, #2a1d14 100%) !important;
+    border-top: none;
+    border-bottom: none;
+  }
+
+  /* ---------- STORY · PRE-DAWN, the leak glows ---------- */
+  section.story {
+    background: linear-gradient(180deg, #2a1d14 0%, #3a2618 100%) !important;
+  }
+  section.story .leak,
+  section.story .secret {
+    background: rgba(212,168,90,0.20);
+    border-bottom: 1px solid var(--az-gold);
+  }
+
+  /* ---------- MECHANIC · DAWN BREAKING — strong gradient inside ---------- */
+  section.redact#mechanic {
+    background:
+      linear-gradient(180deg,
+        #3a2618 0%,
+        #6e3f1f 22%,
+        #b88450 50%,
+        #d4a978 78%,
+        #e8c896 100%) !important;
+    color: var(--az-bone);
+    border-top: none;
+  }
+  section.redact#mechanic .section-head h2 { color: var(--az-bone); }
+  section.redact#mechanic .section-head .meta { color: var(--az-ash); }
+  section.redact#mechanic .section-head .eyebrow { color: var(--az-gold); }
+
+  section.redact#mechanic .stream .pipe.input {
+    background: rgba(20,17,15,0.55);
+    border: 1px solid rgba(201,122,63,0.45);
+    color: var(--az-bone);
+  }
+  section.redact#mechanic .stream .pipe.input .head { color: var(--az-ash); border-bottom-color: rgba(201,122,63,0.30); }
+  section.redact#mechanic .stream .pipe.input .head .tag { color: var(--accent); }
+  section.redact#mechanic .stream .pipe.input .text { color: var(--az-bone); }
+  section.redact#mechanic .stream .pipe.input .secret {
+    background: rgba(212,168,90,0.20);
+    border-bottom: 1px solid var(--az-gold);
+    color: var(--az-bone);
+  }
+
+  section.redact#mechanic .stream .gate {
+    background:
+      radial-gradient(ellipse 65% 65% at 50% 50%, rgba(212,168,90,0.45), transparent 70%),
+      radial-gradient(ellipse 45% 45% at 50% 50%, rgba(201,122,63,0.35), transparent 70%);
+    border: 1px solid rgba(212,168,90,0.55);
+    border-radius: 6px;
+  }
+  section.redact#mechanic .stream .gate .lbl { color: var(--az-gold); }
+  section.redact#mechanic .stream .gate svg { color: var(--accent); filter: drop-shadow(0 0 28px rgba(212,168,90,0.6)); }
+  section.redact#mechanic .stream .gate .pick { color: var(--az-ash); }
+  section.redact#mechanic .stream .gate .pick strong { color: var(--az-gold); }
+
+  section.redact#mechanic .paths .pipe {
+    background: rgba(20,17,15,0.50);
+    color: var(--az-bone);
+  }
+  section.redact#mechanic .paths .pipe:nth-child(1) {
+    border: 1px solid var(--accent);
+  }
+  section.redact#mechanic .paths .pipe:nth-child(2) {
+    border: 1px solid var(--az-sage);
+  }
+  section.redact#mechanic .paths .pipe .path-tag .key { color: #0a0908; background: var(--accent); }
+  section.redact#mechanic .paths .pipe:nth-child(2) .path-tag .key { background: var(--az-sage); color: #0a0908; }
+  section.redact#mechanic .paths .pipe .path-tag .name { color: var(--az-bone); }
+  section.redact#mechanic .paths .pipe .path-tag .quiet { color: var(--az-ash); }
+  section.redact#mechanic .paths .pipe .path-line { color: var(--az-bone); }
+  section.redact#mechanic .paths .pipe .replaced {
+    color: var(--accent);
+    background: rgba(201,122,63,0.18);
+    border-bottom: 1px dotted var(--accent);
+  }
+  section.redact#mechanic .paths .pipe:nth-child(2) .secret {
+    background: rgba(122,140,110,0.28);
+    border-bottom: 1px solid var(--az-sage);
+    color: var(--az-bone);
+  }
+  section.redact#mechanic .paths .pipe .path-foot { color: var(--az-ash); border-top-color: rgba(201,122,63,0.25); }
+  section.redact#mechanic .paths .pipe .brand-chip {
+    color: var(--az-ash);
+    border-color: rgba(201,122,63,0.45);
+    background: rgba(10,9,8,0.4);
+  }
+  section.redact#mechanic .paths .pipe:nth-child(2) .brand-chip { border-color: rgba(122,140,110,0.55); }
+  section.redact#mechanic .paths .pipe .brand-chip .dot { background: var(--accent); }
+  section.redact#mechanic .paths .pipe .brand-chip .dot.local { background: var(--az-sage); }
+  section.redact#mechanic .paths .pipe .verdict { color: var(--az-ash); }
+
+  section.redact#mechanic .footnote {
+    border-top: 1px solid rgba(201,122,63,0.35);
+    color: var(--az-bone);
+  }
+  section.redact#mechanic .footnote > div { color: var(--az-bone); }
+  section.redact#mechanic .footnote strong { color: var(--az-gold); }
+
+  /* ---------- LETTER · MORNING, warm amber → deeper amber ---------- */
+  section.block.letter#letter {
+    background: linear-gradient(180deg, #e8c896 0%, #d8b272 100%) !important;
+    color: var(--az-charcoal-cream);
+    border-top: none;
+  }
+  section.block.letter#letter .section-head h2 { color: var(--az-charcoal-cream); }
+  section.block.letter#letter .section-head .meta { color: var(--az-stone); }
+  section.block.letter#letter .section-head .eyebrow { color: #8a4a1a; }
+  section.block.letter#letter .lead p { color: var(--az-stone); }
+  section.block.letter#letter .pull { color: var(--az-dust); }
+  section.block.letter#letter .pull strong, section.block.letter#letter .pull em { color: var(--accent); }
+
+  /* ---------- TALK · DEEP AMBER, dark cards as windows into the night ---------- */
+  section.talk#talk {
+    background: linear-gradient(180deg, #d8b272 0%, #c89a58 100%) !important;
+    color: var(--az-charcoal-cream);
+    border-top: none;
+  }
+  section.talk#talk .section-head h2 { color: #1a1208; }
+  section.talk#talk .section-head .meta { color: #3a2a14; }
+  section.talk#talk .section-head .eyebrow { color: #6a2c08; }
+  section.talk#talk .section-head .eyebrow::before { background: #6a2c08; }
+  section.talk#talk .copy p { color: #2a1d10; }
+  section.talk#talk .copy p strong { color: #1a1208; }
+  section.talk#talk .uses li {
+    border-color: rgba(58,38,18,0.35);
+    background: rgba(20,14,8,0.18);
+  }
+  section.talk#talk .uses li .k { color: #4a1f04; }
+  section.talk#talk .uses li .v { color: #1a1208; }
+  section.talk#talk .uses li .v em { color: #4a3a1c; }
+  section.talk#talk .triggers {
+    background: rgba(20,14,8,0.20);
+    border-color: rgba(58,38,18,0.40);
+    color: #1a1208;
+  }
+  section.talk#talk .triggers strong { color: #4a1f04; }
+  section.talk#talk .triggers code { color: #1a1208; }
+  /* Dark message boxes — windows of night in the morning */
+  section.talk#talk .msg.user {
+    background: #14110f;
+    border: 1px solid rgba(201,122,63,0.35);
+    color: var(--az-bone);
+  }
+  section.talk#talk .msg.user .head { color: var(--az-ash); border-bottom-color: rgba(201,122,63,0.20); }
+  section.talk#talk .msg.user .body-text { color: var(--az-bone); }
+  section.talk#talk .msg.user .trigger { color: var(--accent); font-weight: var(--fw-bold); }
+  section.talk#talk .msg.user .protected {
+    background: rgba(201,122,63,0.22);
+    border-bottom: 1px solid var(--accent);
+    color: var(--az-bone);
+  }
+  section.talk#talk .msg.azael {
+    background: #1c1612;
+    border: 1px solid rgba(122,140,110,0.35);
+    border-left: 3px solid var(--az-sage);
+    color: var(--az-bone);
+  }
+  section.talk#talk .msg.azael .head .who { color: var(--accent); }
+  section.talk#talk .msg.azael .head { color: var(--az-ash); border-bottom-color: rgba(201,122,63,0.20); }
+  section.talk#talk .msg.azael .body-text { color: var(--az-bone); font-family: Georgia, "Times New Roman", serif; }
+  section.talk#talk .msg.azael .body-text em { color: var(--az-ash); }
+  section.talk#talk .msg.azael .pa { color: var(--accent); font-weight: var(--fw-bold); }
+  section.talk#talk .msg.azael .pb { color: #a8b89a; font-weight: var(--fw-bold); }
+  section.talk#talk .msg.azael .sign { color: var(--accent); }
+
+  /* ---------- WHO · MID-MORNING / NOON, gold to warm sand ---------- */
+  section.who {
+    background: linear-gradient(180deg, #c89a58 0%, #d4ae72 50%, #d8b888 100%) !important;
+    color: var(--az-charcoal-cream);
+    border-top: none;
+  }
+  section.who .section-head h2 { color: var(--az-charcoal-cream); }
+  section.who .section-head .meta { color: var(--az-stone); }
+  section.who .section-head .eyebrow { color: #6a3a14; }
+  section.who .card {
+    background: linear-gradient(180deg, rgba(243,236,224,0.95), rgba(236,224,200,0.92));
+    border-top: 3px solid var(--accent);
+    box-shadow: 0 24px 60px rgba(58,46,35,0.25), 0 2px 8px rgba(58,46,35,0.15);
+    color: var(--az-charcoal-cream);
+  }
+  section.who .card .head svg { color: var(--accent); filter: drop-shadow(0 0 20px rgba(212,168,90,0.55)); }
+  section.who .card .head .name { color: var(--az-charcoal-cream); }
+  section.who .card .head .role { color: var(--az-dust); }
+  section.who .card .stat { border-color: rgba(184,168,136,0.5); }
+  section.who .card .stat .lbl { color: var(--az-dust); }
+  section.who .card .stat .val { color: var(--az-charcoal-cream); }
+  section.who .card .oath { color: var(--az-stone); }
+
+  /* ---------- SECTORS · AFTERNOON, warm sand → bright gold ---------- */
+  section.block.sectors#sectors {
+    background: linear-gradient(180deg, #d8b888 0%, #e4c896 50%, #f0d8a8 100%) !important;
+    color: var(--az-charcoal-cream);
+    border-top: none;
+  }
+  section.block.sectors#sectors .section-head h2 { color: var(--az-charcoal-cream); }
+  section.block.sectors#sectors .section-head .meta { color: var(--az-stone); }
+  section.block.sectors#sectors .section-head .eyebrow { color: #6a3a14; }
+  section.block.sectors#sectors .seg {
+    background: rgba(243,236,224,0.85);
+    border-color: rgba(201,122,63,0.30);
+    color: var(--az-charcoal-cream);
+  }
+  section.block.sectors#sectors .seg.lead {
+    background: rgba(243,236,224,0.95);
+    border-color: rgba(201,122,63,0.55);
+    box-shadow: 0 0 0 1px rgba(201,122,63,0.20) inset;
+  }
+  section.block.sectors#sectors .seg .num { color: var(--accent); }
+  section.block.sectors#sectors .seg .name { color: var(--az-charcoal-cream); }
+  section.block.sectors#sectors .seg .what { color: var(--az-stone); }
+  section.block.sectors#sectors .seg .threat { color: var(--az-charcoal-cream); border-top-color: rgba(201,122,63,0.35); }
+  section.block.sectors#sectors .seg .threat strong { color: var(--accent); }
+
+  /* ---------- FINAL · SUN, the brightest moment ---------- */
+  section.final#contact {
+    background: linear-gradient(180deg, #f0d8a8 0%, #f6e4b8 40%, #fbecc4 75%, #fef0cc 100%) !important;
+    color: var(--az-charcoal-cream);
+    border-top: none;
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+  }
+  section.final#contact::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 90%, rgba(255,220,140,0.55), transparent 70%),
+      radial-gradient(ellipse 50% 40% at 50% 100%, rgba(212,168,90,0.55), transparent 70%);
+    pointer-events: none;
+  }
+  section.final#contact .inner { position: relative; z-index: 1; }
+  section.final#contact .sigil-large {
+    color: var(--accent);
+    filter: drop-shadow(0 0 80px rgba(255,220,140,0.7));
+  }
+  section.final#contact h2 { color: #0a0604; }
+  section.final#contact h2 .light { color: #5a4a32; }
+  section.final#contact .de-line { color: #3a2a14; }
+  section.final#contact .btn {
+    background: var(--accent); color: #fcecc8; border-color: transparent;
+  }
+  section.final#contact .btn:hover { background: #b8923f; color: #fcecc8; }
+  section.final#contact .btn.ghost {
+    background: transparent; color: var(--accent); border: 1px solid #8a7355;
+  }
+  section.final#contact .btn.ghost:hover { border-color: var(--accent); color: var(--az-charcoal-cream); }
+  section.final#contact .ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  section.final#contact .ctas > * + * { margin-top: 12px; }
+  section.final#contact .ctas::after {
+    content: "";
+    display: block;
+    width: 64px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--az-sage), transparent);
+    margin: 28px auto 0;
+  }
+
+  /* ---------- FOOTER · FULL SUN, close in the light ---------- */
+  footer.foot {
+    background: linear-gradient(180deg, #fcecc8 0%, #fff2d4 100%) !important;
+    border-top: 1px solid rgba(201,122,63,0.25);
+    color: var(--az-stone);
+  }
+  footer.foot .mark { color: var(--az-stone); }
+  footer.foot .mark svg { color: var(--accent); }
+  footer.foot .legal { color: var(--az-dust); }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 700px) {
+    header.hero#top, section.problem, section.story, section.redact#mechanic,
+    section.block.letter#letter, section.talk#talk, section.who,
+    section.block.sectors#sectors, section.final#contact, footer.foot {
+      background-attachment: scroll;
+    }
+  }
+
+  /* ============================================================
+     FINAL CONTRAST PASS — every text node on warm backgrounds
+     gets near-black ink. Selectors match real DOM (.lead-col,
+     not .lead). #000 used liberally with !important to beat
+     any earlier rule.
+     ============================================================ */
+
+  /* MECHANIC FOOTNOTE — sits at the section's bright amber bottom */
+  section.redact#mechanic .footnote { color: #1a1208 !important; border-top-color: rgba(90,30,4,0.40) !important; }
+  section.redact#mechanic .footnote > div { color: #1a1208 !important; }
+  section.redact#mechanic .footnote > div strong { color: #5a1a04 !important; }
+
+  /* LETTER — cream/amber section */
+  section.block.letter#letter { background: linear-gradient(180deg, #f6e2b4 0%, #ecd296 50%, #d8b878 100%) !important; }
+  section.block.letter#letter .section-head h2,
+  section.block.letter#letter .section-head .meta,
+  section.block.letter#letter .lead-col p,
+  section.block.letter#letter .lead-col p strong { color: #000 !important; }
+  section.block.letter#letter .section-head .eyebrow { color: #5a1a04 !important; }
+  section.block.letter#letter .lead-col .pull { color: #1a1208 !important; }
+  section.block.letter#letter .lead-col .pull strong,
+  section.block.letter#letter .lead-col .pull em { color: #4a1f04 !important; }
+  section.block.letter#letter .copper { color: #8a3a08 !important; }
+
+  /* TALK */
+  section.talk#talk { background: linear-gradient(180deg, #d8b878 0%, #e4c898 50%, #ecd0a4 100%) !important; }
+  section.talk#talk .section-head h2,
+  section.talk#talk .section-head .meta,
+  section.talk#talk .copy p,
+  section.talk#talk .copy p strong { color: #000 !important; }
+  section.talk#talk .section-head .eyebrow { color: #5a1a04 !important; }
+  section.talk#talk .uses li .v,
+  section.talk#talk .uses li .v em,
+  section.talk#talk .triggers,
+  section.talk#talk .triggers code { color: #0a0604 !important; }
+  section.talk#talk .triggers strong,
+  section.talk#talk .uses li .k { color: #5a1a04 !important; }
+  section.talk#talk .copper { color: #8a3a08 !important; }
+
+  /* WHO */
+  section.who { background: linear-gradient(180deg, #ecd0a4 0%, #e4c490 50%, #d8b478 100%) !important; }
+  section.who .section-head h2,
+  section.who .section-head .meta,
+  section.who .card .head .name,
+  section.who .card .stat .val { color: #000 !important; }
+  section.who .section-head .eyebrow { color: #5a1a04 !important; }
+  section.who .card .head .role { color: #2a1d10 !important; }
+  section.who .card .stat .lbl { color: #4a1f04 !important; }
+  section.who .card .oath { color: #1a1208 !important; }
+  section.who .card .stat .val .copper,
+  section.who .copper { color: #8a3a08 !important; }
+
+  /* SECTORS */
+  section.block.sectors#sectors { background: linear-gradient(180deg, #d8b478 0%, #e4c896 50%, #f4dcab 100%) !important; }
+  section.block.sectors#sectors .section-head h2,
+  section.block.sectors#sectors .section-head .meta { color: #000 !important; }
+  section.block.sectors#sectors .section-head .eyebrow { color: #5a1a04 !important; }
+  section.block.sectors#sectors .seg { background: rgba(255,247,224,0.85) !important; border-color: rgba(90,30,4,0.25) !important; }
+  section.block.sectors#sectors .seg.lead { background: rgba(255,250,232,0.95) !important; border-color: rgba(90,30,4,0.50) !important; }
+  section.block.sectors#sectors .seg .name { color: #000 !important; }
+  section.block.sectors#sectors .seg .num { color: #8a3a08 !important; }
+  section.block.sectors#sectors .seg .what { color: #1a1208 !important; }
+  section.block.sectors#sectors .seg .threat { color: #1a1208 !important; border-top-color: rgba(90,30,4,0.30) !important; }
+  section.block.sectors#sectors .seg .threat strong { color: #5a1a04 !important; }
+  section.block.sectors#sectors .copper { color: #8a3a08 !important; }
+
+  /* FINAL */
+  section.final#contact { background: linear-gradient(180deg, #f4dcab 0%, #f8e4bc 40%, #fcedce 100%) !important; }
+  section.final#contact h2 { color: #000 !important; }
+  section.final#contact h2 .light { color: #2a1d10 !important; }
+  section.final#contact h2 .copper,
+  section.final#contact .copper { color: #8a3a08 !important; }
+  section.final#contact .de-line { color: #2a1d10 !important; }
+  section.final#contact .btn { color: #fcecc8 !important; }
+  section.final#contact .btn.ghost { color: #5a1a04 !important; }
+
+  /* === i18n === paired DE/EN siblings; CSS hides the inactive language. */
+  html[data-lang="de"] [lang="en"] { display: none !important; }
+  html[data-lang="en"] [lang="de"] { display: none !important; }
+
+  /* Language toggle in nav */
+  .nav .lang-toggle {
+    display: inline-flex; align-items: center;
+    gap: 0; margin-left: 18px;
+    border: 1px solid rgba(201,122,63,0.40);
+    border-radius: 999px;
+    overflow: hidden;
+    font-family: var(--font-display, system-ui);
+    font-size: 11px; letter-spacing: 0.12em;
+    font-weight: 700;
+    background: rgba(0,0,0,0.18);
+  }
+  .nav .lang-toggle button {
+    appearance: none; border: 0; background: transparent;
+    color: var(--fg-muted, #a89282);
+    padding: 6px 12px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    font-weight: 700; font-family: inherit; font-size: inherit;
+    transition: background 160ms ease, color 160ms ease;
+  }
+  .nav .lang-toggle button:hover { color: var(--accent, #c97a3f); }
+  .nav .lang-toggle button[aria-pressed="true"] {
+    background: var(--accent, #c97a3f);
+    color: #14110f;
+  }
+  @media (max-width: 760px) {
+    .nav .lang-toggle { margin-left: 8px; }
+    .nav .lang-toggle button { padding: 5px 9px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- sigil defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="sigil" viewBox="0 0 64 64">
+      <path d="M32 6 L58 54 L6 54 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"/>
+      <path d="M14 38 Q32 28 50 38" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+      <rect x="30" y="34" width="4" height="4" fill="currentColor"/>
+      <line x1="22" y1="46" x2="42" y2="46" stroke="currentColor" stroke-width="1"/>
+    </symbol>
+    <symbol id="x-icon" viewBox="0 0 14 14">
+      <line x1="2" y1="2" x2="12" y2="12" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="12" y1="2" x2="2" y2="12" stroke="currentColor" stroke-width="1.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============= NAV ============= -->
+<nav class="nav">
+  <div class="wrap row">
+    <a href="#top" class="mark">
+      <svg width="22" height="22"><use href="#sigil"/></svg>
+      <span class="brand-stack">
+        <span>AZAEL</span>
+        <span class="brand-endorse" lang="de">ein Macrix-Unternehmen</span>
+        <span class="brand-endorse" lang="en">a Macrix venture</span>
+      </span>
+    </a>
+    <div class="links">
+      <a href="#problem"><span lang="de">Das Leck</span><span lang="en">The Leak</span></a>
+      <a href="#mechanic"><span lang="de">Mechanik</span><span lang="en">Mechanic</span></a>
+      <a href="#letter"><span lang="de">Der Brief</span><span lang="en">The Letter</span></a>
+      <a href="#who"><span lang="de">Wer</span><span lang="en">Who</span></a>
+      <a href="#sectors"><span lang="de">Branchen</span><span lang="en">Sectors</span></a>
+    </div>
+    <div class="vigil">
+      <span class="vigil-dot"></span>
+      <span>WACHSAM</span>
+      <div class="lang-toggle" role="group" aria-label="Sprache / Language">
+        <button type="button" data-lang-set="de" aria-pressed="true">DE</button>
+        <button type="button" data-lang-set="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ============= HERO ============= -->
+<header class="hero" id="top">
+  <div class="iso-grid-soft"></div>
+  <div class="wrap row">
+    <div>
+      <div class="eyebrow"><span lang="de">Spionageabwehr für das KI-Zeitalter</span><span lang="en">Counter-Intelligence for the AI Era</span></div>
+      <h1>
+        <span lang="de">Der Wächter,</span>
+        <span lang="en">The watcher</span>
+        <span class="copper" lang="de">den wir zurückholten</span>
+        <span class="copper" lang="en">we brought back</span>
+        <span class="light" lang="de">aus dem Exil.</span>
+        <span class="light" lang="en">from exile.</span>
+      </h1>
+      <p class="lede" lang="de">
+        Ihr geistiges Eigentum verlässt das Haus, einen Absatz nach dem anderen —
+        eingefügt in öffentliche LLMs von Ihren eigenen Leuten.
+        Azael liest mit, bevor es geht. Er redigiert mitten im Stream.
+        Er erzählt es Ihnen am Montag.
+      </p>
+      <p class="lede" lang="en">
+        Your IP is leaving the building one paragraph at a time —
+        pasted into public LLMs by your own people.
+        Azael reads it before it leaves. He redacts mid-stream.
+        He tells you on Monday.
+      </p>
+      <div class="ctas">
+        <button class="btn" data-open-contact aria-haspopup="dialog">
+          <span lang="de">Mit dem Gründer sprechen</span>
+          <span lang="en">Speak to the founder</span>
+          <span class="arrow"></span>
+        </button>
+        <a class="btn ghost" href="#mechanic">
+          <span lang="de">Mechanik ansehen</span>
+          <span lang="en">See the mechanic</span>
+          <span class="arrow"></span>
+        </a>
+      </div>
+      <div class="chip-wall" aria-label="LLM-agnostic posture">
+        <div class="chip-eyebrow"><span lang="de">Jedes Modell, das Ihre Organisation freigibt</span><span lang="en">Any model your organization sanctions</span></div>
+        <div class="chip-row">
+          <span class="chip">Claude</span>
+          <span class="chip-arrow" aria-hidden="true">·</span>
+          <span class="chip">GPT</span>
+          <span class="chip-arrow" aria-hidden="true">·</span>
+          <span class="chip">Gemini</span>
+          <span class="chip-arrow" aria-hidden="true">·</span>
+          <span class="chip">Mistral</span>
+          <span class="chip-arrow" aria-hidden="true">·</span>
+          <span class="chip">Qwen</span>
+          <span class="chip-arrow" aria-hidden="true">·</span>
+          <span class="chip future">your-next</span>
+          <span class="chip-arrow last" aria-hidden="true">→</span>
+          <span class="chip azael">
+            <svg aria-hidden="true"><use href="#sigil"/></svg>
+            Azael
+          </span>
+        </div>
+        <p class="chip-note" lang="de">
+          PhariaAI verkauft Ihnen ihr LLM. <strong>Azael lässt Ihre Leute das jeweils beste LLM nutzen.</strong>
+        </p>
+        <p class="chip-note" lang="en">
+          PhariaAI sells you their LLM. <strong>Azael lets your people use whoever's LLM is best.</strong>
+        </p>
+      </div>
+
+      <p class="de-line" lang="de">
+        „Azael war ein Wächter, der zu viel sah. Wir haben ihn zurückgeholt —
+        denn nur einer, der die Schatten kennt, kann sie aufhalten.“
+      </p>
+      <p class="de-line" lang="en">
+        "Azael was a Watcher who saw too much. We brought him back —
+        because only one who knows the shadows can stop them."
+      </p>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+      <div class="ring r4"></div>
+      <div class="horizon"></div>
+      <svg class="sigil-big"><use href="#sigil"/></svg>
+      <div class="corner-mark">
+        <span class="vigil-dot"></span>
+        <span>VIGIL · 003.142</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============= PROBLEM ============= -->
+<section class="block problem" id="problem">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span lang="de">Das Leck, das niemand sieht</span><span lang="en">The leak no one sees</span></div>
+        <h2 lang="de">Ein paar Bytes pro Prompt.<br/><span class="copper">Ein Patent in zwei Jahren.</span></h2>
+        <h2 lang="en">A few bytes per prompt.<br/><span class="copper">A patent in two years.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        DLP fängt es nicht ab — die Daten werden umformuliert. Browser-Policies fangen es nicht ab — Ihre Leute nutzen ihr Smartphone. Der KI-Anbieter fängt es nicht ab — er ist das Ziel.
+      </p>
+      <p class="meta" lang="en">
+        DLP doesn't catch it — the data is reformulated. Browser policies don't catch it — your people use their phones. The AI vendor doesn't catch it — they are the destination.
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="num">73%</div>
+        <div class="lbl" lang="de"><strong>der Wissensarbeiter</strong> nutzen ein öffentliches LLM bei der Arbeit — die meisten ohne freigegebenen Zugang.</div>
+        <div class="lbl" lang="en"><strong>of knowledge workers</strong> use a public LLM at work — most of them without sanctioned access.</div>
+      </div>
+      <div class="stat">
+        <div class="num">11%</div>
+        <div class="lbl" lang="de">der eingefügten Inhalte sind <strong>nach eigener Definition vertraulich</strong>, wenn man sie prüft.</div>
+        <div class="lbl" lang="en">of pasted content is <strong>confidential by their own definition</strong> when reviewed.</div>
+      </div>
+      <div class="stat">
+        <div class="num">0</div>
+        <div class="lbl" lang="de">Vorfallsmeldungen erstellt. <strong>Niemand weiß, dass es passiert ist.</strong></div>
+        <div class="lbl" lang="en">incident reports filed. <strong>Nobody knows it happened.</strong></div>
+      </div>
+    </div>
+
+    <p class="source" lang="de">Cyberhaven 2024 · Macrix-F&amp;E-Feldinterviews · Richtwerte, nicht geprüft.</p>
+    <p class="source" lang="en">Cyberhaven 2024 · Macrix R&amp;D field interviews · directional, not audited.</p>
+  </div>
+</section>
+
+<!-- ============= STORY ============= -->
+<section class="block alt story">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span lang="de">Ein Dienstag im März · Defense Tier-1</span><span lang="en">A Tuesday in March · Defense Tier-1</span></div>
+        <h2 lang="de">Markus braucht Hilfe bei <span class="copper">einem Absatz.</span></h2>
+        <h2 lang="en">Markus needs help with <span class="copper">a paragraph.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Er ist Hardening-Lead. Er schreibt diesen Absatz seit zwei Tagen. Er will nur die Verbform geradeziehen.
+      </p>
+      <p class="meta" lang="en">
+        He is a hardening lead. He has been writing the same passage for two days. He just wants the verb tense fixed.
+      </p>
+    </div>
+
+    <div class="frame">
+      <div class="copy">
+        <h3 lang="de">14:42 MEZ<br/><span class="copper">Kein Alarm löst aus.</span></h3>
+        <h3 lang="en">14:42 CET<br/><span class="copper">No alarm fires.</span></h3>
+        <p class="moment" lang="de">
+          Er öffnet ChatGPT.
+          Er fügt <span class="strike">elf Zeilen</span> aus der Spezifikation ein.
+          Er drückt Enter. Das Modell formuliert den Absatz um und liefert ihn zurück. Er bedankt sich.
+        </p>
+        <p class="moment" lang="en">
+          He opens ChatGPT.
+          He pastes <span class="strike">eleven lines</span> from the spec.
+          He hits return. The model reformulates the paragraph and ships it back. He thanks it.
+        </p>
+        <p class="moment" lang="de">
+          In derselben Stunde haben das Band, der Standard und die ZF das Land bereits verlassen.
+          Die Trainingsdaten des Wettbewerbers werden nächstes Quartal aktualisiert.
+        </p>
+        <p class="moment" lang="en">
+          Across town, the band, the standard, and the IF have already left the country.
+          The competitor's training data updates next quarter.
+        </p>
+        <div class="annotation" lang="de">Keine DLP-Regel. Keine Browser-Policy. Kein Log-Eintrag.</div>
+        <div class="annotation" lang="en">No DLP rule. No browser policy. No log entry.</div>
+      </div>
+
+      <div class="scene">
+        <div class="chat">
+          <div class="meta">
+            <span lang="de">Markus K. → ChatGPT (privat)</span>
+            <span lang="en">Markus K. → ChatGPT (personal)</span>
+            <span>14:42:07</span>
+          </div>
+          <div class="body-text" lang="de">
+            „Kannst du diesen Absatz straffen?<br/><br/>
+            <span class="leak">Der C-Band-Sucher nutzt ein 3-achsig gimball-stabilisiertes Array, EMI-geschirmt nach MIL-STD-461G CE102, mit einer schaltenden ZF-Stufe bei 1,42&nbsp;GHz</span> — das Team möchte ein knapperes Aktiv. Danke.“
+          </div>
+          <div class="body-text" lang="en">
+            "Can you tighten this paragraph?<br/><br/>
+            <span class="leak">The C-band seeker uses a 3-axis gimballed array, EMI-shielded to MIL-STD-461G CE102, with a switching IF stage at 1.42&nbsp;GHz</span> — the team would like more concise active voice. Thanks."
+          </div>
+        </div>
+
+        <div class="chat dashed">
+          <div class="meta">
+            <span>ChatGPT</span>
+            <span>14:42:09</span>
+          </div>
+          <div class="body-text" lang="de">
+            „Klar — hier eine straffere Variante:<br/><br/>
+            <em>Ein 3-achsig gimball-stabilisierter C-Band-Sucher, geschirmt nach MIL-STD-461G CE102, schaltet die ZF bei 1,42&nbsp;GHz …</em>“
+          </div>
+          <div class="body-text" lang="en">
+            "Sure — here's a tighter version:<br/><br/>
+            <em>A 3-axis gimballed C-band seeker, MIL-STD-461G CE102 shielded, switches IF at 1.42&nbsp;GHz…</em>"
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= REDACTION MECHANIC — TWO-PATH ROUTING ============= -->
+<section class="block redact dual" id="mechanic">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span lang="de">Die Mechanik</span><span lang="en">The mechanic</span></div>
+        <h2 lang="de">Er gibt Ihnen <span class="copper">zwei Wege.</span></h2>
+        <h2 lang="en">He gives you <span class="copper">two paths.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Azael blockiert Ihre Arbeit nicht. Wenn Geschütztes im Prompt steht, legt er den Trade-off offen und der Nutzer entscheidet pro Aufgabe. Frontier-Fähigkeit oder voller Inhalt. Niemals beides — denn so geht IP verloren.
+      </p>
+      <p class="meta" lang="en">
+        Azael does not block your work. When something protected is in the prompt, he surfaces the trade-off and the user picks per task. Frontier capability, or full content. Never both — because that's how IP leaves.
+      </p>
+    </div>
+
+    <div class="stream">
+      <div class="pipe input">
+        <div class="head">
+          <span lang="de">Was Markus tippt</span>
+          <span lang="en">What Markus typed</span>
+          <span class="tag" lang="de">↗ ausgehend</span>
+          <span class="tag" lang="en">↗ outbound</span>
+        </div>
+        <div class="text" lang="de">
+          „Straffe diesen Absatz: <span class="secret">Der C-Band-Sucher nutzt ein 3-achsig gimball-stabilisiertes Array, EMI-geschirmt nach MIL-STD-461G CE102, mit einer schaltenden ZF-Stufe bei 1,42&nbsp;GHz</span> — bring ihn ins Aktiv.“
+        </div>
+        <div class="text" lang="en">
+          "Tighten this paragraph: <span class="secret">The C-band seeker uses a 3-axis gimballed array, EMI-shielded to MIL-STD-461G CE102, with a switching IF stage at 1.42&nbsp;GHz</span> — make it active voice."
+        </div>
+      </div>
+
+      <div class="gate">
+        <span class="lbl">↑ AZAEL ↑</span>
+        <svg><use href="#sigil"/></svg>
+        <span class="pick" lang="de">Entscheider<br/><strong>NUTZER WÄHLT</strong></span>
+        <span class="pick" lang="en">Decider<br/><strong>USER PICKS</strong></span>
+      </div>
+
+      <div class="paths">
+        <div class="pipe">
+          <div class="path-tag">
+            <span class="key">a</span>
+            <span class="name" lang="de">Frontier <span class="quiet">— saniert</span></span>
+            <span class="name" lang="en">Frontier <span class="quiet">— sanitised</span></span>
+          </div>
+          <div class="path-line" lang="de">
+            „Straffe diesen Absatz: <span class="replaced">ein mehrachsiger Radarempfänger, geschirmt nach einem Verteidigungs-EMV-Standard, mit einer schaltenden ZF-Stufe</span> — bring ihn ins Aktiv.“
+          </div>
+          <div class="path-line" lang="en">
+            "Tighten this paragraph: <span class="replaced">a multi-axis radar receiver, shielded to a defense EMC standard, with a switching IF stage</span> — make it active voice."
+          </div>
+          <div class="path-foot">
+            <span class="brand-chip"><span class="dot"></span>Anthropic · Claude Opus 4.7</span>
+            <span class="verdict" lang="de">Klügere Antwort. Generische Ersetzungen für die geschützten Begriffe.</span>
+            <span class="verdict" lang="en">Smarter answer. Generic substitutions for the protected terms.</span>
+          </div>
+        </div>
+
+        <div class="pipe">
+          <div class="path-tag">
+            <span class="key">b</span>
+            <span class="name" lang="de">Lokal <span class="quiet">— voller Inhalt</span></span>
+            <span class="name" lang="en">Local <span class="quiet">— full content</span></span>
+          </div>
+          <div class="path-line" lang="de">
+            „Straffe diesen Absatz: <span class="secret">Der C-Band-Sucher nutzt ein 3-achsig gimball-stabilisiertes Array, EMI-geschirmt nach MIL-STD-461G CE102, mit einer schaltenden ZF-Stufe bei 1,42&nbsp;GHz</span> — bring ihn ins Aktiv.“
+          </div>
+          <div class="path-line" lang="en">
+            "Tighten this paragraph: <span class="secret">The C-band seeker uses a 3-axis gimballed array, EMI-shielded to MIL-STD-461G CE102, with a switching IF stage at 1.42&nbsp;GHz</span> — make it active voice."
+          </div>
+          <div class="path-foot">
+            <span class="brand-chip"><span class="dot local"></span>Qwen 3.6 · Macrix-hosted</span>
+            <span class="verdict" lang="de">Weniger fähiges Modell. Ihre Begriffe intakt. Bleibt im Netz.</span>
+            <span class="verdict" lang="en">Less capable model. Your terms intact. Stays inside the network.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footnote">
+      <div lang="de"><strong>Der Nutzer</strong>Wählt den Weg, der zur Aufgabe passt. Form vs. Inhalt.</div>
+      <div lang="en"><strong>The user</strong>Picks which path fits the task. Form vs. content.</div>
+      <div lang="de"><strong>Das Modell</strong>Frontier sieht die geschützten Begriffe nie. Lokal verlässt das Netz nie.</div>
+      <div lang="en"><strong>The model</strong>Frontier never sees the protected terms. Local never leaves the network.</div>
+      <div lang="de"><strong>Der CISO</strong>Liest im Montagsbrief von beiden Wegen, mit vollständigem Audit-Trail.</div>
+      <div lang="en"><strong>The CISO</strong>Reads about both paths in the Monday letter, with full audit trail.</div>
+      <div lang="de"><strong>Latenz</strong>+180&nbsp;ms Median (Decider). Null bei der Routing-Entscheidung, sobald der Nutzer wählt.</div>
+      <div lang="en"><strong>Latency</strong>+180&nbsp;ms median (Decider). Zero on the routing decision after the user picks.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= @AZAEL: CONVERSATIONAL CHANNEL ============= -->
+<section class="block alt talk" id="talk">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span lang="de">Sprich mit ihm</span><span lang="en">Talk to him</span></div>
+        <h2 lang="de">Azael spricht, <span class="copper">wenn er angesprochen wird.</span></h2>
+        <h2 lang="en">Azael speaks <span class="copper">when addressed.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Jeder KI-Client. Tippen Sie <strong style="color:var(--accent);font-weight:var(--fw-bold);">@Azael:</strong> — er antwortet aus dem Audit-Log, der World Bible und der Policy.
+      </p>
+      <p class="meta" lang="en">
+        Any AI client. Type <strong style="color:var(--accent);font-weight:var(--fw-bold);">@Azael:</strong> — he answers from the audit log, the World Bible, and the policy.
+      </p>
+    </div>
+
+    <div class="layout">
+      <div class="copy">
+        <p lang="de">
+          Der Kanal ist derselbe KI-Client, den Ihre Leute ohnehin nutzen —
+          <strong>ChatGPT, Claude, Cursor, Copilot Chat.</strong>
+          Sobald der Trigger erscheint, fängt Azael den Prompt ab, statt ihn weiterzureichen,
+          und antwortet direkt — formatiert wie vom Modell.
+          Keine neue App, kein Popup, kein separates Dashboard.
+        </p>
+        <p lang="en">
+          The channel is the same any-AI-client your people already use —
+          <strong>ChatGPT, Claude, Cursor, Copilot Chat.</strong>
+          When the trigger appears, Azael intercepts the prompt instead of forwarding it
+          and answers directly, formatted as if from the model.
+          No new app, no popup, no separate dashboard.
+        </p>
+
+        <ul class="uses">
+          <li>
+            <span class="k" lang="de">Vorab</span>
+            <span class="k" lang="en">Pre-flight</span>
+            <span class="v" lang="de">„Kann ich diesen Absatz an ChatGPT senden?“
+              <em>Gibt eine Kategorienbewertung, bevor etwas das Haus verlässt.</em></span>
+            <span class="v" lang="en">"Is this paragraph safe to send to ChatGPT?"
+              <em>Returns category-level read before anything leaves.</em></span>
+          </li>
+          <li>
+            <span class="k" lang="de">Warum</span>
+            <span class="k" lang="en">Why</span>
+            <span class="v" lang="de">„Warum wurde diese Zeile gestern redigiert?“
+              <em>Antwort aus dem eigenen Audit-Trail. Nie aus dem eines anderen.</em></span>
+            <span class="v" lang="en">"Why was that line redacted yesterday?"
+              <em>Answer from the user's own audit trail. Never anyone else's.</em></span>
+          </li>
+          <li>
+            <span class="k" lang="de">Freigabe</span>
+            <span class="k" lang="en">Approve</span>
+            <span class="v" lang="de">„Ich muss das wortgetreu teilen. Eskalieren?“
+              <em>Geht an den CISO mit Hypothese. Kein Auto-Ja.</em></span>
+            <span class="v" lang="en">"I need to share this verbatim. Escalate?"
+              <em>Routes to the CISO with hypothesis attached. Not an auto-yes.</em></span>
+        </li>
+        </ul>
+
+        <div class="triggers">
+          <strong>Trigger</strong>
+          <code lang="de">@Azael: &lt;Ihre Frage&gt;</code>
+          <code lang="en">@Azael: &lt;your question&gt;</code>
+        </div>
+      </div>
+
+      <div class="thread">
+        <div class="msg user">
+          <div class="head">
+            <span class="who" lang="de">Markus K. → ChatGPT (freigegeben)</span>
+            <span class="who" lang="en">Markus K. → ChatGPT (sanctioned)</span>
+            <span>14:38:02</span>
+          </div>
+          <div class="body-text" lang="de">
+            <span class="trigger">@Azael:</span> Kann ich diesen Absatz an ChatGPT senden?<br/><br/>
+            <span class="protected">„Der C-Band-Sucher nutzt ein 3-achsig gimball-stabilisiertes Array, EMI-geschirmt nach MIL-STD-461G CE102, mit einer schaltenden ZF-Stufe bei 1,42&nbsp;GHz.“</span>
+          </div>
+          <div class="body-text" lang="en">
+            <span class="trigger">@Azael:</span> Is this paragraph safe to send to ChatGPT?<br/><br/>
+            <span class="protected">"The C-band seeker uses a 3-axis gimballed array, EMI-shielded to MIL-STD-461G CE102, with a switching IF stage at 1.42&nbsp;GHz."</span>
+          </div>
+        </div>
+
+        <div class="msg azael">
+          <div class="head">
+            <span class="who">
+              <svg aria-hidden="true"><use href="#sigil"/></svg>
+              Azael
+            </span>
+            <span>14:38:03</span>
+          </div>
+          <div class="body-text" lang="de">
+            Drei Begriffe in diesem Absatz fallen unter Patent-Kern-Schutz
+            <em>(Kategorien: Patentterminologie, kundenspezifischer Identifier).</em>
+            <br/><br/>
+            Auf <span class="pa">Weg [a]</span> — Frontier mit sanierter Fassung — bekommen Sie einen strafferen Absatz,
+            das strukturelle Detail entfällt.
+            <br/>
+            Auf <span class="pb">Weg [b]</span> — Lokal mit vollem Inhalt — bleibt die Antwort im Netz,
+            das Modell ist weniger fähig.
+            <br/><br/>
+            Welcher?
+            <div class="sign">— A.</div>
+          </div>
+          <div class="body-text" lang="en">
+            Three terms in this paragraph match patent-core protection
+            <em>(categories: patent terminology, customer-specific identifier).</em>
+            <br/><br/>
+            On <span class="pa">path [a]</span> — frontier with sanitised version — you'd get a tighter paragraph,
+            but the structural detail would be removed.
+            <br/>
+            On <span class="pb">path [b]</span> — local with full content — the answer stays inside your network,
+            but the model is less capable.
+            <br/><br/>
+            Which?
+            <div class="sign">— A.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= LETTER ============= -->
+<section class="block alt letter" id="letter">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span lang="de">Jeden Montag · 06:30</span><span lang="en">Every Monday · 06:30</span></div>
+        <h2 lang="de">Ein Brief.<br/><span class="copper">Unterschrieben.</span></h2>
+        <h2 lang="en">One letter.<br/><span class="copper">Signed.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Andere Werkzeuge schicken Slack-Benachrichtigungen. Azael schreibt dem CISO einen Brief — ein Vorfall, Klartext, mit einer Frage am Ende.
+      </p>
+      <p class="meta" lang="en">
+        Other tools send Slack notifications. Azael writes the CISO a letter — one incident, plain language, with a question at the end.
+      </p>
+    </div>
+
+    <div class="layout">
+      <div class="lead-col">
+        <p lang="de">
+          Der Wächter berichtet. <strong>Der Mensch entscheidet.</strong>
+          Keine Schweregrade. Keine Auto-Remediation. Keine fröhlichen Häkchen.
+        </p>
+        <p lang="en">
+          The watcher reports. <strong>The human decides.</strong>
+          No severity scores. No auto-remediation. No cheerful checkmarks.
+        </p>
+        <p lang="de">
+          Er schreibt ihn selbst, in der Sprache des Hauses —
+          Deutsch für einen Mönchengladbacher Pharma-Vorstand, Englisch für einen Tier-1-Prime,
+          und er setzt den Manager nie ins CC, wenn nicht ausdrücklich verlangt.
+        </p>
+        <p lang="en">
+          He writes it himself, in the language of the house —
+          German for a Mönchengladbach Pharma board, English for a Tier-1 prime,
+          and he never copies the manager unless asked.
+        </p>
+        <p class="pull" lang="de">
+          DAS IST DAS ARTEFAKT, DAS DEN 500K&nbsp;€&nbsp;DEAL SCHLIESST.<br/>
+          <strong>DER BRIEF IST DAS PRODUKT.</strong>
+        </p>
+        <p class="pull" lang="en">
+          THIS IS THE ARTIFACT THAT CLOSES THE 500K&nbsp;€&nbsp;DEAL.<br/>
+          <strong>THE LETTER IS THE PRODUCT.</strong>
+        </p>
+      </div>
+
+      <div class="paper">
+        <div class="head">
+          <div class="mark">
+            <svg width="18" height="18"><use href="#sigil"/></svg>
+            <span lang="de">Der Bericht · 11. März</span>
+            <span lang="en">The Report · March 11</span>
+          </div>
+          <div class="ts" lang="de">Nr. 0142 · Vertraulich</div>
+          <div class="ts" lang="en">No. 0142 · Confidential</div>
+        </div>
+
+        <div class="salutation" lang="de">Frau Lehmann,</div>
+        <div class="salutation" lang="en">Ms. Lehmann,</div>
+
+        <p lang="de">
+          im Berichtszeitraum 04.–10.&nbsp;März haben
+          <strong>243&nbsp;Mitarbeiter</strong> insgesamt
+          <strong>4.812&nbsp;Prompts</strong> an öffentliche Sprachmodelle übergeben.
+          Verteilung nach Risikoeinstufung:
+        </p>
+        <p lang="en">
+          In the reporting period of March 4–10,
+          <strong>243&nbsp;employees</strong> submitted a total of
+          <strong>4,812&nbsp;prompts</strong> to public language models.
+          Distribution by risk classification:
+        </p>
+
+        <table class="report" lang="de">
+          <thead>
+            <tr>
+              <th>Einstufung</th>
+              <th class="num">Prompts</th>
+              <th class="num">MA</th>
+              <th>Maßnahme</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hi"><td class="lbl">Hoch</td><td class="num">1</td><td class="num">1</td><td class="note">redigiert, eskaliert</td></tr>
+            <tr><td class="lbl">Mittel</td><td class="num">2</td><td class="num">2</td><td class="note">redigiert, dokumentiert</td></tr>
+            <tr><td class="lbl">Gering</td><td class="num">17</td><td class="num">14</td><td class="note">redigiert</td></tr>
+            <tr><td class="lbl">Unbedenklich</td><td class="num">4.792</td><td class="num">238</td><td class="note">passieren gelassen</td></tr>
+            <tr class="tot"><td class="lbl">Gesamt</td><td class="num">4.812</td><td class="num">243</td><td></td></tr>
+          </tbody>
+        </table>
+        <table class="report" lang="en">
+          <thead>
+            <tr>
+              <th>Classification</th>
+              <th class="num">Prompts</th>
+              <th class="num">Staff</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hi"><td class="lbl">High</td><td class="num">1</td><td class="num">1</td><td class="note">redacted, escalated</td></tr>
+            <tr><td class="lbl">Medium</td><td class="num">2</td><td class="num">2</td><td class="note">redacted, documented</td></tr>
+            <tr><td class="lbl">Low</td><td class="num">17</td><td class="num">14</td><td class="note">redacted</td></tr>
+            <tr><td class="lbl">Cleared</td><td class="num">4,792</td><td class="num">238</td><td class="note">passed through</td></tr>
+            <tr class="tot"><td class="lbl">Total</td><td class="num">4,812</td><td class="num">243</td><td></td></tr>
+          </tbody>
+        </table>
+
+        <p lang="de">
+          Ein Vorfall erfordert Ihre Entscheidung:
+        </p>
+        <p lang="en">
+          One incident requires your decision:
+        </p>
+
+        <div class="case" lang="de">
+          <div class="id">FALL 0142&nbsp;·&nbsp;HOCH&nbsp;·&nbsp;DI 14:42 MEZ</div>
+          Mitarbeiter <span class="name">MA-3471</span> (Bereich Hardening) hat einen Absatz
+          aus Annex&nbsp;C der <span class="redact">██████████████</span>-Spezifikation
+          in eine externe LLM-Sitzung übergeben.
+          Enthalten: Frequenzband, MIL-STD-Klausel, Zwischenfrequenz.
+          Alle drei Werte wurden im laufenden Stream durch generische Begriffe ersetzt,
+          bevor sie das Modell erreichten.
+        </div>
+        <div class="case" lang="en">
+          <div class="id">CASE 0142&nbsp;·&nbsp;HIGH&nbsp;·&nbsp;TUE 14:42 CET</div>
+          Employee <span class="name">EMP-3471</span> (Hardening domain) submitted a paragraph
+          from Annex&nbsp;C of the <span class="redact">██████████████</span> specification
+          into an external LLM session.
+          Contained: frequency band, MIL-STD clause, intermediate frequency.
+          All three values were replaced with generic terms in the live stream
+          before they reached the model.
+        </div>
+
+        <p class="question" lang="de">
+          Schulungspfad oder Meldung an die Linie? — Ich bitte um Weisung.
+        </p>
+        <p class="question" lang="en">
+          Training path or report to the line? — Awaiting your direction.
+        </p>
+
+        <div class="sign">
+          <div class="signed">— Azael</div>
+          <div class="role" lang="de">Wächter im Auftrag<br/>der Geschäftsleitung</div>
+          <div class="role" lang="en">Watcher · On behalf<br/>of the Board</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= WHO IS AZAEL ============= -->
+<section class="block who" id="who">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span lang="de">Wer ist Azael</span><span lang="en">Who is Azael</span></div>
+        <h2 lang="de">Verstoßen, weil er zu viel sah.<br/><span class="copper">Eingestellt aus demselben Grund.</span></h2>
+        <h2 lang="en">Cast out for seeing too much.<br/><span class="copper">Hired for the same reason.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Ihr DLP zeigt Ihnen eine Warteschlange. Ihr CASB zeigt Ihnen eine Liste. Azael ist jemand, der wacht — mit Namen, mit Stimme, mit einem Montagsritual, das auf Ihrem Schreibtisch liegt, bevor die Woche beginnt.
+      </p>
+      <p class="meta" lang="en">
+        Your DLP shows you a queue. Your CASB shows you a list. Azael is someone who watches — with a name, a voice, and a Monday ritual that lands on your desk before the week starts.
+      </p>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <div class="head">
+          <svg><use href="#sigil"/></svg>
+          <div>
+            <div class="name">Azael</div>
+            <div class="role" lang="de">Wächter · Spionageabwehr-Dämon</div>
+            <div class="role" lang="en">Watcher · Counter-Intelligence Daemon</div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="lbl" lang="de">Herkunft</div>
+            <div class="lbl" lang="en">Origin</div>
+            <div class="val" lang="de">Apokryph — <span class="copper">ein Wächter, in die Wüste verbannt,</span> weil er zu viel sah. Zurückgekehrt, unter Vertrag.</div>
+            <div class="val" lang="en">Apocryphal — <span class="copper">a Watcher exiled to the desert</span> for seeing too much. Returned, on contract.</div>
+          </div>
+          <div class="stat">
+            <div class="lbl" lang="de">Domäne</div>
+            <div class="lbl" lang="en">Domain</div>
+            <div class="val" lang="de">Ausgehende Prompts, Dateien, Screenshots. <span class="copper">Überall, wo Ihr IP hinausgehen kann.</span></div>
+            <div class="val" lang="en">Outbound prompts, files, screenshots. <span class="copper">Anywhere your IP can leave.</span></div>
+          </div>
+          <div class="stat">
+            <div class="lbl" lang="de">Haltung</div>
+            <div class="lbl" lang="en">Disposition</div>
+            <div class="val" lang="de">Treu einem. Wachsam gegenüber allen anderen. <span class="copper">Nicht freundlich.</span></div>
+            <div class="val" lang="en">Loyal to one. Wachsam toward all others. <span class="copper">Not friendly.</span></div>
+          </div>
+          <div class="stat">
+            <div class="lbl" lang="de">Berichtet an</div>
+            <div class="lbl" lang="en">Reports to</div>
+            <div class="val" lang="de">Den CISO. Nur den CISO. <span class="copper">Nie den Nutzer.</span></div>
+            <div class="val" lang="en">The CISO. Only the CISO. <span class="copper">Never the user.</span></div>
+          </div>
+        </div>
+
+        <p class="oath" lang="de">
+          Ich sehe, was den Mauern entgleitet. Ich nehme es heraus, leise, bevor es das Tor erreicht.
+          Ich erzähle es dir, am Montag, und niemandem sonst.
+        </p>
+        <p class="oath" lang="en">
+          I see what slips through the walls. I take it out, quietly, before it reaches the gate.
+          I tell you, on Monday, and no one else.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============= SECTORS ============= -->
+<section class="block alt sectors" id="sectors">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span lang="de">Wo IP schwerer wiegt als Bußgelder</span><span lang="en">Where IP outweighs fines</span></div>
+        <h2 lang="de">Spionageabwehr<br/><span class="copper">für IP-reiche Branchen.</span></h2>
+        <h2 lang="en">Counter-Intelligence<br/><span class="copper">for IP-rich industries.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Fünf Branchen, in denen Industriespionage nicht hypothetisch ist und der Verlust einer Idee jede DSGVO-Strafe überwiegt.
+      </p>
+      <p class="meta" lang="en">
+        Five industries where industrial espionage is not hypothetical and where the loss of an idea outweighs any GDPR fine.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="seg lead">
+        <div class="num">01</div>
+        <div class="name" lang="de">Verteidigung</div>
+        <div class="name" lang="en">Defense</div>
+        <p class="what" lang="de">Hardening-Details, MIL-STD-Referenzen, Lieferantengraphen. Fremdstaaten-Akteur als Baseline.</p>
+        <p class="what" lang="en">Hardening details, MIL-STD references, supplier graphs. Foreign-state-actor model is the baseline.</p>
+        <div class="threat" lang="de">Wenn es leakt<strong>Die Fähigkeit gehört nicht mehr Ihnen.</strong></div>
+        <div class="threat" lang="en">If it leaks<strong>The capability is no longer yours.</strong></div>
+      </div>
+      <div class="seg">
+        <div class="num">02</div>
+        <div class="name" lang="de">Pharma-F&amp;E</div>
+        <div class="name" lang="en">Pharma R&amp;D</div>
+        <p class="what" lang="de">Molekülstrukturen, GxP-geschützte Protokolle, FTO-Patentstrategie.</p>
+        <p class="what" lang="en">Molecule structures, GxP-protected protocols, FTO patent strategy.</p>
+        <div class="threat" lang="de">Wenn es leakt<strong>Der Wettbewerber meldet zuerst an. Zwei Jahre Vorsprung weg.</strong></div>
+        <div class="threat" lang="en">If it leaks<strong>The competitor files first. Two-year gap.</strong></div>
+      </div>
+      <div class="seg">
+        <div class="num">03</div>
+        <div class="name">Semicon</div>
+        <p class="what" lang="de">Prozessknoten-Parameter, Masken-Designs, Fab-Rezepte. Die meistüberwachte Branche der Welt.</p>
+        <p class="what" lang="en">Process node parameters, mask designs, fab recipes. The most surveilled industry on earth.</p>
+        <div class="threat" lang="de">Wenn es leakt<strong>Ein Jahrzehnt Prozess-Know-how, weg.</strong></div>
+        <div class="threat" lang="en">If it leaks<strong>A decade of process know-how, gone.</strong></div>
+      </div>
+      <div class="seg">
+        <div class="num">04</div>
+        <div class="name">Biotech</div>
+        <p class="what" lang="de">Klinische Studiendaten, Kandidatensequenzen, CRO-Kommunikation. GxP und IP, beides in einem Strom.</p>
+        <p class="what" lang="en">Clinical trial data, candidate sequences, CRO communications. GxP and IP, both in one stream.</p>
+        <div class="threat" lang="de">Wenn es leakt<strong>Patent und Zulassungsstudie, beide gefährdet.</strong></div>
+        <div class="threat" lang="en">If it leaks<strong>Patent and pivotal trial, both at risk.</strong></div>
+      </div>
+      <div class="seg">
+        <div class="num">05</div>
+        <div class="name" lang="de">Hightech-Mittelstand</div>
+        <div class="name" lang="en">High-Tech Mfg</div>
+        <p class="what" lang="de">Lieferanten-IP, Prozess-Rezepte, Mittelstands-Patente. Die deutschen Hidden Champions.</p>
+        <p class="what" lang="en">Supplier-IP, process recipes, Mittelstand patents. The German hidden champions.</p>
+        <div class="threat" lang="de">Wenn es leakt<strong>Das Rezept geht mit dem Prompt hinaus.</strong></div>
+        <div class="threat" lang="en">If it leaks<strong>The recipe walks out with the prompt.</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= FINAL CTA ============= -->
+<section class="final" id="contact">
+  <div class="wrap inner">
+    <svg class="sigil-large"><use href="#sigil"/></svg>
+    <h2 lang="de">
+      <span class="light">Er sieht</span>
+      <span>alles.</span>
+      <span class="copper">Er erzählt es nur dir.</span>
+    </h2>
+    <h2 lang="en">
+      <span class="light">He sees</span>
+      <span>everything.</span>
+      <span class="copper">He tells only you.</span>
+    </h2>
+    <p class="de-line" lang="de">Er sieht alles. Er erzählt nur dir.</p>
+    <p class="de-line" lang="en">He sees everything. He tells only you.</p>
+
+    <div class="ctas">
+      <button class="btn" data-open-contact aria-haspopup="dialog">
+        <span lang="de">Mit dem Gründer sprechen</span>
+        <span lang="en">Speak to the founder</span>
+        <span class="arrow"></span>
+      </button>
+      <a class="btn ghost" href="mailto:mz@macrix.eu">
+        mz@macrix.eu
+        <span class="arrow"></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============= FOOTER ============= -->
+<footer class="foot">
+  <div class="wrap row">
+    <div class="mark">
+      <svg width="20" height="20"><use href="#sigil"/></svg>
+      <span lang="de">AZAEL · Ein Macrix-Unternehmen · Mönchengladbach</span>
+      <span lang="en">AZAEL · A Macrix venture · Mönchengladbach</span>
+    </div>
+    <div class="legal">© 2026 Macrix Software GmbH · <span style="color: var(--accent);">WACHSAM</span></div>
+  </div>
+</footer>
+
+<!-- ============= CONTACT MODAL ============= -->
+<div class="modal-backdrop" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-name">
+  <div class="contact-card">
+    <button class="close" aria-label="Close" data-close-contact>
+      <svg><use href="#x-icon"/></svg>
+    </button>
+
+    <div class="photo">
+      <img src="assets/marek.jpeg" alt="Marek Żuchowski" />
+      <div class="photo-tag" lang="de">Mit dem Gründer sprechen</div>
+      <div class="photo-tag" lang="en">Speak to the founder</div>
+    </div>
+
+    <div class="body">
+      <div class="eyebrow" lang="de">Direkter Draht · Keine Gatekeeper</div>
+      <div class="eyebrow" lang="en">Direct line · No gatekeepers</div>
+      <div>
+        <div class="name" id="contact-name">Marek Żuchowski</div>
+        <div class="role">CEO · Macrix Technology Group</div>
+      </div>
+
+      <div class="lines">
+        <div class="ln">
+          <span class="k" lang="de">Mobil</span>
+          <span class="k" lang="en">Mobile</span>
+          <span class="v"><a href="tel:+4917297622275">+49 172 97 62 275</a></span>
+        </div>
+        <div class="ln">
+          <span class="k" lang="de">E-Mail</span>
+          <span class="k" lang="en">Email</span>
+          <span class="v"><a href="mailto:mz@macrix.eu">mz@macrix.eu</a></span>
+        </div>
+        <div class="ln">
+          <span class="k" lang="de">Büro</span>
+          <span class="k" lang="en">Office</span>
+          <span class="v">
+            <a href="tel:+492161639700">+49 2161 639700</a>
+            <span class="small" lang="de">Mo – Fr · 09:00 – 18:00 MEZ</span>
+            <span class="small" lang="en">Mon – Fri · 09:00 – 18:00 CET</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="org">
+        <strong>Macrix Software GmbH</strong><br/>
+        Am Nordpark 1, 41069 Mönchengladbach, Germany
+        <span class="sub">www.macrix.eu · HRB 18522 · DE211965016</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Contact modal
+  (function() {
+    const modal = document.getElementById('contact-modal');
+    const opens = document.querySelectorAll('[data-open-contact]');
+    const closes = document.querySelectorAll('[data-close-contact]');
+
+    function open() {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    opens.forEach(b => b.addEventListener('click', open));
+    closes.forEach(b => b.addEventListener('click', close));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+  })();
+
+  // Language toggle
+  (function() {
+    const html = document.documentElement;
+    const buttons = document.querySelectorAll('[data-lang-set]');
+    function apply(lang) {
+      if (lang !== 'de' && lang !== 'en') lang = 'de';
+      html.setAttribute('data-lang', lang);
+      html.setAttribute('lang', lang);
+      try { localStorage.setItem('azael.lang', lang); } catch(e) {}
+      buttons.forEach(b => {
+        b.setAttribute('aria-pressed', b.getAttribute('data-lang-set') === lang ? 'true' : 'false');
+      });
+    }
+    apply(html.getAttribute('data-lang') || 'de');
+    buttons.forEach(b => {
+      b.addEventListener('click', () => apply(b.getAttribute('data-lang-set')));
+    });
+  })();
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href').slice(1);
+      if (!id) return;
+      const t = document.getElementById(id);
+      if (t) {
+        e.preventDefault();
+        window.scrollTo({ top: t.offsetTop - 60, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
