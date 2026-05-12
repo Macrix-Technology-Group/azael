@@ -151,21 +151,16 @@ deck-stage > section {
 
 .eyebrow {
   font-size: 14px;
-  font-weight: var(--fw-bold);
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--accent);
-  display: inline-flex; align-items: center; gap: 16px;
-}
-.eyebrow::before {
-  content: '';
+  font-weight: var(--fw-regular);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--fg-muted);
+  font-style: italic;
   display: inline-block;
-  width: 56px; height: 2px;
-  background: var(--accent);
 }
+.eyebrow::before { display: none; }
 
-.eyebrow.muted { color: var(--fg-muted); }
-.eyebrow.muted::before { background: var(--fg-subtle); }
+.eyebrow.muted { color: var(--fg-subtle); }
 
 /* Display headline — Lato Black 900, tight */
 h1, h2, h3, p { margin: 0; }
