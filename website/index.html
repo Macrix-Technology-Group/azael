@@ -540,33 +540,30 @@ h1, h2, h3, p { margin: 0; }
   }
 
   /* === Problem section === */
-  .problem .stat-row {
+  .problem .leak-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    border-top: 1px solid var(--border);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 8px;
   }
-  .problem .stat {
-    padding: 40px 36px 12px 0;
-    border-right: 1px solid var(--border);
+  .problem .leak {
+    background: var(--bg);
+    padding: 28px 26px;
+    display: flex; flex-direction: column; gap: 10px;
+    min-height: 130px;
   }
-  .problem .stat:last-child { border-right: 0; padding-right: 0; }
-  .problem .stat .num {
-    font-weight: var(--fw-black);
-    font-size: 80px; line-height: 1;
-    color: var(--accent);
-    letter-spacing: -0.02em;
-  }
-  .problem .stat .lbl {
-    margin-top: 14px;
-    font-size: 16px; line-height: 1.5;
-    color: var(--fg-muted);
-  }
-  .problem .stat .lbl strong { color: var(--fg-strong); font-weight: var(--fw-bold); }
-  .problem .source {
-    margin-top: 28px;
-    font-size: 11px; color: var(--fg-subtle);
-    letter-spacing: var(--tracking-caps); text-transform: uppercase;
+  .problem .leak-name {
+    font-size: 18px;
     font-weight: var(--fw-bold);
+    color: var(--accent);
+    letter-spacing: -0.005em;
+  }
+  .problem .leak-what {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--fg-muted);
   }
 
   /* === Story section === */
@@ -1221,6 +1218,7 @@ h1, h2, h3, p { margin: 0; }
     .section-head h2 { font-size: 48px; }
     .story .frame, .letter .layout, .who .layout { grid-template-columns: 1fr; gap: 56px; }
     .sectors .grid { grid-template-columns: repeat(2, 1fr); }
+    .problem .leak-grid { grid-template-columns: repeat(2, 1fr); }
     .redact .footnote { grid-template-columns: repeat(2, 1fr); }
     .contact-card { grid-template-columns: 1fr; }
     .contact-card .photo { min-height: 280px; }
@@ -1233,8 +1231,7 @@ h1, h2, h3, p { margin: 0; }
     section.block { padding: 96px 0; }
     .final { padding: 96px 0; }
     .final h2 { font-size: 52px; }
-    .problem .stat-row { grid-template-columns: 1fr; }
-    .problem .stat { border-right: 0; border-bottom: 1px solid var(--border); padding: 28px 0; }
+    .problem .leak-grid { grid-template-columns: 1fr; }
     .redact .stream { grid-template-columns: 1fr; }
     .redact .pipe { border-right: 0; border-bottom: 1px solid var(--border); }
     .redact .gate { min-height: 80px; padding: 20px; }
@@ -1373,6 +1370,8 @@ h1, h2, h3, p { margin: 0; }
     position: relative;
   }
   .redact.dual .paths .pipe:last-child { border-bottom: 0; }
+  .redact.dual .paths .pipe.escalation { opacity: 0.72; padding-top: 22px; padding-bottom: 22px; }
+  .redact.dual .paths .pipe.escalation .path-line { font-size: 13.5px; }
   .redact.dual .path-tag {
     display: inline-flex; align-items: center; gap: 10px;
     font-size: 10px; letter-spacing: var(--tracking-caps);
@@ -2519,16 +2518,20 @@ h1, h2, h3, p { margin: 0; }
         <span class="light" lang="en">from exile.</span>
       </h1>
       <p class="lede" lang="de">
-        Ihr geistiges Eigentum verlässt das Haus, einen Absatz nach dem anderen —
-        eingefügt in öffentliche LLMs von Ihren eigenen Leuten.
-        Azael liest mit, bevor es geht. Er redigiert mitten im Stream.
-        Er erzählt es Ihnen am Montag.
+        Ihre Leute wollen die beste KI nutzen. Claude, GPT-5, Gemini,
+        was im nächsten Quartal am besten ist. <strong>Azael lässt sie das tun, sicher.</strong>
+        Er liest jeden Prompt, entfernt sensible Inhalte (anonymisiert Namen,
+        ersetzt Projekt-Codes, redigiert regulierte Identifier) und leitet
+        eine konforme Version an das Modell weiter. Ihre Leute behalten die
+        Frontier. Sie behalten Ihre IP.
       </p>
       <p class="lede" lang="en">
-        Your IP is leaving the building one paragraph at a time —
-        pasted into public LLMs by your own people.
-        Azael reads it before it leaves. He redacts mid-stream.
-        He tells you on Monday.
+        Your people want to use the best AI. Claude, GPT-5, Gemini,
+        whichever is best next quarter. <strong>Azael lets them, safely.</strong>
+        He reads every prompt, edits out the sensitive content (anonymizes
+        names, substitutes project codes, redacts regulated identifiers),
+        and forwards a compliant version to the model. Your people keep
+        the frontier. You keep your IP.
       </p>
       <div class="ctas">
         <button class="btn" data-open-contact aria-haspopup="dialog">
@@ -2604,33 +2607,71 @@ h1, h2, h3, p { margin: 0; }
         <h2 lang="en">A few bytes per prompt.<br/><span class="copper">A patent in two years.</span></h2>
       </div>
       <p class="meta" lang="de">
-        DLP fängt es nicht ab — die Daten werden umformuliert. Browser-Policies fangen es nicht ab — Ihre Leute nutzen ihr Smartphone. Der KI-Anbieter fängt es nicht ab — er ist das Ziel.
+        Was Ihre Leute heute in ChatGPT einfügen. DLP fängt es nicht ab,
+        Browser-Policies auch nicht. Der KI-Anbieter ist das Ziel.
       </p>
       <p class="meta" lang="en">
-        DLP doesn't catch it — the data is reformulated. Browser policies don't catch it — your people use their phones. The AI vendor doesn't catch it — they are the destination.
+        What your people are pasting into ChatGPT today. DLP doesn't catch it.
+        Browser policies don't catch it. The AI vendor is the destination.
       </p>
     </div>
 
-    <div class="stat-row">
-      <div class="stat">
-        <div class="num">73%</div>
-        <div class="lbl" lang="de"><strong>der Wissensarbeiter</strong> nutzen ein öffentliches LLM bei der Arbeit — die meisten ohne freigegebenen Zugang.</div>
-        <div class="lbl" lang="en"><strong>of knowledge workers</strong> use a public LLM at work — most of them without sanctioned access.</div>
+    <div class="leak-grid">
+      <div class="leak">
+        <div class="leak-name" lang="de">Kundendaten</div>
+        <div class="leak-name" lang="en">Client data</div>
+        <div class="leak-what" lang="de">Namen, Konto-IDs, Deal-Größen, Kontaktlisten.</div>
+        <div class="leak-what" lang="en">Names, account IDs, deal sizes, contact lists.</div>
       </div>
-      <div class="stat">
-        <div class="num">11%</div>
-        <div class="lbl" lang="de">der eingefügten Inhalte sind <strong>nach eigener Definition vertraulich</strong>, wenn man sie prüft.</div>
-        <div class="lbl" lang="en">of pasted content is <strong>confidential by their own definition</strong> when reviewed.</div>
+      <div class="leak">
+        <div class="leak-name" lang="de">Personendaten</div>
+        <div class="leak-name" lang="en">Personal data</div>
+        <div class="leak-what" lang="de">Personalakten, HR-Dokumente, DSGVO-geschützte Felder.</div>
+        <div class="leak-what" lang="en">Employee records, HR documents, GDPR-protected fields.</div>
       </div>
-      <div class="stat">
-        <div class="num">0</div>
-        <div class="lbl" lang="de">Vorfallsmeldungen erstellt. <strong>Niemand weiß, dass es passiert ist.</strong></div>
-        <div class="lbl" lang="en">incident reports filed. <strong>Nobody knows it happened.</strong></div>
+      <div class="leak">
+        <div class="leak-name" lang="de">Produkt-IP</div>
+        <div class="leak-name" lang="en">Product IP</div>
+        <div class="leak-what" lang="de">Patentansprüche, technische Spezifikationen, Design-Parameter.</div>
+        <div class="leak-what" lang="en">Patent claims, technical specs, design parameters.</div>
+      </div>
+      <div class="leak">
+        <div class="leak-name" lang="de">Vertrauliche Korrespondenz</div>
+        <div class="leak-name" lang="en">Confidential correspondence</div>
+        <div class="leak-what" lang="de">Interne Mails, Verträge, Vorstandsmemos.</div>
+        <div class="leak-what" lang="en">Internal emails, contracts, board memos.</div>
+      </div>
+      <div class="leak">
+        <div class="leak-name" lang="de">Quellcode</div>
+        <div class="leak-name" lang="en">Source code</div>
+        <div class="leak-what" lang="de">Proprietäre Algorithmen, API-Schlüssel, Lizenz-Token.</div>
+        <div class="leak-what" lang="en">Proprietary algorithms, API keys, license tokens.</div>
+      </div>
+      <div class="leak">
+        <div class="leak-name" lang="de">Finanzdaten</div>
+        <div class="leak-name" lang="en">Financial data</div>
+        <div class="leak-what" lang="de">Umsätze, GuV, Prognosen, M&amp;A-Zahlen.</div>
+        <div class="leak-what" lang="en">Revenue, P&amp;L, projections, M&amp;A figures.</div>
+      </div>
+      <div class="leak">
+        <div class="leak-name" lang="de">Steuerdaten</div>
+        <div class="leak-name" lang="en">Tax data</div>
+        <div class="leak-what" lang="de">Steuererklärungen, Verrechnungspreis-Strukturen, Prüfungsergebnisse.</div>
+        <div class="leak-what" lang="en">Returns, transfer-pricing structures, audit findings.</div>
+      </div>
+      <div class="leak">
+        <div class="leak-name" lang="de">Strategische Pläne</div>
+        <div class="leak-name" lang="en">Strategic plans</div>
+        <div class="leak-what" lang="de">Roadmaps, Pricing-Playbooks, M&amp;A-Ziele.</div>
+        <div class="leak-what" lang="en">Roadmaps, pricing playbooks, M&amp;A targets.</div>
+      </div>
+      <div class="leak">
+        <div class="leak-name" lang="de">Lage des Unternehmens</div>
+        <div class="leak-name" lang="en">Company condition</div>
+        <div class="leak-what" lang="de">Risikobewertungen, Audit-Berichte, KPI-Dashboards.</div>
+        <div class="leak-what" lang="en">Risk assessments, audit reports, KPI dashboards.</div>
       </div>
     </div>
-
-    <p class="source" lang="de">Cyberhaven 2024 · Macrix-F&amp;E-Feldinterviews · Richtwerte, nicht geprüft.</p>
-    <p class="source" lang="en">Cyberhaven 2024 · Macrix R&amp;D field interviews · directional, not audited.</p>
   </div>
 </section>
 
@@ -2717,14 +2758,14 @@ h1, h2, h3, p { margin: 0; }
   <div class="wrap">
     <div class="section-head">
       <div>
-        <h2 lang="de">Er gibt Ihnen <span class="copper">zwei Wege.</span></h2>
-        <h2 lang="en">He gives you <span class="copper">two paths.</span></h2>
+        <h2 lang="de">Er <span class="copper">redigiert den Prompt</span>, bevor er das Haus verlässt.</h2>
+        <h2 lang="en">He <span class="copper">edits the prompt</span> before it leaves.</h2>
       </div>
       <p class="meta" lang="de">
-        Azael blockiert Ihre Arbeit nicht. Wenn Geschütztes im Prompt steht, legt er den Trade-off offen und der Nutzer entscheidet pro Aufgabe. Frontier-Fähigkeit oder voller Inhalt. Niemals beides — denn so geht IP verloren.
+        Azael liest jeden Prompt, identifiziert sensible Inhalte und ersetzt sie durch Platzhalter: Namen anonymisiert, Projekt-Codes durch generische Begriffe ersetzt, regulierte Identifier entfernt. Die saubere Version geht an das Modell. Das Modell sieht nie, was Ihnen gehört.
       </p>
       <p class="meta" lang="en">
-        Azael does not block your work. When something protected is in the prompt, he surfaces the trade-off and the user picks per task. Frontier capability, or full content. Never both — because that's how IP leaves.
+        Azael reads every prompt, identifies sensitive content, and replaces it with placeholders: names anonymized, project codes substituted with generic terms, regulated identifiers removed. The clean version goes to the model. The model never sees what's yours.
       </p>
     </div>
 
@@ -2747,16 +2788,16 @@ h1, h2, h3, p { margin: 0; }
       <div class="gate">
         <span class="lbl">↑ AZAEL ↑</span>
         <svg><use href="#sigil"/></svg>
-        <span class="pick" lang="de">Entscheider<br/><strong>NUTZER WÄHLT</strong></span>
-        <span class="pick" lang="en">Decider<br/><strong>USER PICKS</strong></span>
+        <span class="pick" lang="de">Decider<br/><strong>REDIGIERT</strong></span>
+        <span class="pick" lang="en">Decider<br/><strong>REDACTS</strong></span>
       </div>
 
       <div class="paths">
         <div class="pipe">
           <div class="path-tag">
-            <span class="key">a</span>
-            <span class="name" lang="de">Frontier <span class="quiet">— saniert</span></span>
-            <span class="name" lang="en">Frontier <span class="quiet">— sanitised</span></span>
+            <span class="key">→</span>
+            <span class="name" lang="de">Saniert an die Frontier</span>
+            <span class="name" lang="en">Sanitized to the frontier</span>
           </div>
           <div class="path-line" lang="de">
             „Straffe diesen Absatz: <span class="replaced">ein mehrachsiger Radarempfänger, geschirmt nach einem Verteidigungs-EMV-Standard, mit einer schaltenden ZF-Stufe</span> — bring ihn ins Aktiv.“
@@ -2766,41 +2807,41 @@ h1, h2, h3, p { margin: 0; }
           </div>
           <div class="path-foot">
             <span class="brand-chip"><span class="dot"></span>Anthropic · Claude Opus 4.7</span>
-            <span class="verdict" lang="de">Klügere Antwort. Generische Ersetzungen für die geschützten Begriffe.</span>
-            <span class="verdict" lang="en">Smarter answer. Generic substitutions for the protected terms.</span>
+            <span class="verdict" lang="de">Brauchbare Antwort. Geschützte Begriffe nie auf der Leitung. Standardweg für die meisten Aufgaben.</span>
+            <span class="verdict" lang="en">Usable answer. Protected terms never on the wire. Default path for most tasks.</span>
           </div>
         </div>
 
-        <div class="pipe">
+        <div class="pipe escalation">
           <div class="path-tag">
-            <span class="key">b</span>
-            <span class="name" lang="de">Lokal <span class="quiet">— voller Inhalt</span></span>
-            <span class="name" lang="en">Local <span class="quiet">— full content</span></span>
+            <span class="key">↩</span>
+            <span class="name" lang="de">Eskalation: lokal mit vollem Inhalt</span>
+            <span class="name" lang="en">Escalation: local with full content</span>
           </div>
           <div class="path-line" lang="de">
-            „Straffe diesen Absatz: <span class="secret">Der C-Band-Sucher nutzt ein 3-achsig gimball-stabilisiertes Array, EMI-geschirmt nach MIL-STD-461G CE102, mit einer schaltenden ZF-Stufe bei 1,42&nbsp;GHz</span> — bring ihn ins Aktiv.“
+            Reicht die Sanierung für die Aufgabe nicht aus — etwa weil die geschützten Begriffe genau das sind, worum es geht — kann der Nutzer den vollen Prompt stattdessen an ein lokales Modell schicken. Voller Inhalt, weniger fähiges Modell, bleibt im Netz.
           </div>
           <div class="path-line" lang="en">
-            "Tighten this paragraph: <span class="secret">The C-band seeker uses a 3-axis gimballed array, EMI-shielded to MIL-STD-461G CE102, with a switching IF stage at 1.42&nbsp;GHz</span> — make it active voice."
+            If sanitization isn't enough for the task — for instance because the protected terms are precisely what the question is about — the user can send the full prompt to a local model instead. Full content, less capable model, stays inside the network.
           </div>
           <div class="path-foot">
-            <span class="brand-chip"><span class="dot local"></span>Qwen 3.6 · Macrix-hosted</span>
-            <span class="verdict" lang="de">Weniger fähiges Modell. Ihre Begriffe intakt. Bleibt im Netz.</span>
-            <span class="verdict" lang="en">Less capable model. Your terms intact. Stays inside the network.</span>
+            <span class="brand-chip"><span class="dot local"></span>Qwen 3.6 · Macrix-hosted · Frankfurt</span>
+            <span class="verdict" lang="de">Nutzerentscheidung pro Prompt. Im Audit-Trail sichtbar. Standardweg für IP-zentrische Aufgaben.</span>
+            <span class="verdict" lang="en">User's choice per prompt. Visible in the audit trail. Default path for IP-centric tasks.</span>
           </div>
         </div>
       </div>
     </div>
 
     <div class="footnote">
-      <div lang="de"><strong>Der Nutzer</strong>Wählt den Weg, der zur Aufgabe passt. Form vs. Inhalt.</div>
-      <div lang="en"><strong>The user</strong>Picks which path fits the task. Form vs. content.</div>
-      <div lang="de"><strong>Das Modell</strong>Frontier sieht die geschützten Begriffe nie. Lokal verlässt das Netz nie.</div>
-      <div lang="en"><strong>The model</strong>Frontier never sees the protected terms. Local never leaves the network.</div>
-      <div lang="de"><strong>Der CISO</strong>Liest im Montagsbrief von beiden Wegen, mit vollständigem Audit-Trail.</div>
-      <div lang="en"><strong>The CISO</strong>Reads about both paths in the Monday letter, with full audit trail.</div>
-      <div lang="de"><strong>Latenz</strong>+180&nbsp;ms Median (Decider). Null bei der Routing-Entscheidung, sobald der Nutzer wählt.</div>
-      <div lang="en"><strong>Latency</strong>+180&nbsp;ms median (Decider). Zero on the routing decision after the user picks.</div>
+      <div lang="de"><strong>Der Nutzer</strong>Arbeitet weiter. Bekommt eine brauchbare Antwort von dem Modell, das er sowieso nutzen wollte.</div>
+      <div lang="en"><strong>The user</strong>Keeps working. Gets a usable answer from the model they already wanted to use.</div>
+      <div lang="de"><strong>Das Modell</strong>Sieht den sanierten Prompt. Patente, Kundendaten, regulierte Identifier nie.</div>
+      <div lang="en"><strong>The model</strong>Sees the sanitized prompt. Patents, client data, regulated identifiers never.</div>
+      <div lang="de"><strong>Der CISO</strong>Liest jeden Montag den Wochenbrief. Was geleakt wäre, was redigiert wurde, was eskaliert.</div>
+      <div lang="en"><strong>The CISO</strong>Reads the weekly letter every Monday. What would have leaked, what was redacted, what escalated.</div>
+      <div lang="de"><strong>Latenz</strong>+180&nbsp;ms Median. Der Prompt-Fluss bricht nicht ab, das Streaming bleibt erhalten.</div>
+      <div lang="en"><strong>Latency</strong>+180&nbsp;ms median. The prompt flow doesn't break, streaming stays intact.</div>
     </div>
   </div>
 </section>
