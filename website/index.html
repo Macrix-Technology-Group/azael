@@ -2465,6 +2465,242 @@ h1, h2, h3, p { margin: 0; }
     .nav .lang-toggle button { padding: 5px 9px; font-size: 10px; }
   }
 </style>
+<style>
+  /* ============================================================
+     PROOF LAYER — Red-Team Gate, Works-Council Blueprint,
+     OWASP Coverage, Compliance Packs, Macrix Stack,
+     Reference Configurations.
+     Sits on the cream/amber portion of the narrative arc.
+     ============================================================ */
+
+  section.block.gate#gate {
+    background: linear-gradient(180deg, #d8b878 0%, #e0c084 100%) !important;
+    color: #1a1208;
+    border-top: none;
+    border-bottom: none;
+  }
+  section.block.blueprint#blueprint {
+    background: linear-gradient(180deg, #e0c084 0%, #ecd0a4 100%) !important;
+    color: #1a1208;
+    border-top: none;
+    border-bottom: none;
+  }
+  section.block.coverage#coverage {
+    background: linear-gradient(180deg, #f4dcab 0%, #f4dcab 100%) !important;
+    color: #1a1208;
+    border-top: none;
+    border-bottom: none;
+  }
+  section.block.stack#stack {
+    background: linear-gradient(180deg, #fcedce 0%, #fce8c4 100%) !important;
+    color: #1a1208;
+    border-top: none;
+    border-bottom: none;
+  }
+  section.block.configs#configs {
+    background: linear-gradient(180deg, #fce8c4 0%, #fcecc8 100%) !important;
+    color: #1a1208;
+    border-top: none;
+    border-bottom: none;
+  }
+
+  section.block.gate#gate .section-head h2,
+  section.block.blueprint#blueprint .section-head h2,
+  section.block.coverage#coverage .section-head h2,
+  section.block.stack#stack .section-head h2,
+  section.block.configs#configs .section-head h2 { color: #000 !important; }
+
+  section.block.gate#gate .section-head .meta,
+  section.block.blueprint#blueprint .section-head .meta,
+  section.block.coverage#coverage .section-head .meta,
+  section.block.stack#stack .section-head .meta,
+  section.block.configs#configs .section-head .meta { color: #1a1208 !important; }
+
+  section.block.gate#gate .copper,
+  section.block.blueprint#blueprint .copper,
+  section.block.coverage#coverage .copper,
+  section.block.stack#stack .copper,
+  section.block.configs#configs .copper { color: #8a3a08 !important; }
+
+  /* Body intro paragraphs */
+  .proof-body {
+    font-size: 16px; line-height: 1.6;
+    color: #1a1208;
+    max-width: 64ch;
+    margin: 0 0 28px;
+    font-weight: var(--fw-light);
+  }
+  .proof-body.spaced { margin-top: 36px; }
+
+  /* Criteria list — Red-Team and Works-Council bullets */
+  .criteria-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid rgba(90,30,4,0.30);
+  }
+  .criteria-list li {
+    border-bottom: 1px solid rgba(90,30,4,0.30);
+    padding: 18px 0 18px 28px;
+    font-size: 16px; line-height: 1.55;
+    color: #1a1208;
+    position: relative;
+    font-weight: var(--fw-regular);
+  }
+  .criteria-list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 26px;
+    width: 8px; height: 8px;
+    background: var(--accent);
+  }
+  .criteria-list code {
+    font-family: var(--font-mono);
+    background: rgba(20,17,15,0.10);
+    padding: 1px 6px;
+    color: #5a1a04;
+    font-size: 0.9em;
+  }
+
+  /* Pull quote */
+  .proof-pull {
+    margin-top: 48px;
+    padding: 0 0 0 24px;
+    border-left: 3px solid var(--accent);
+    font-style: italic;
+    font-weight: var(--fw-light);
+    font-size: 24px; line-height: 1.4;
+    color: #1a1208;
+    max-width: 42ch;
+  }
+
+  /* Tables — OWASP, Macrix Stack, Reference Configs */
+  .proof-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,247,224,0.85);
+    border: 1px solid rgba(90,30,4,0.25);
+    font-size: 14.5px;
+    color: #1a1208;
+  }
+  .proof-table th, .proof-table td {
+    padding: 18px 22px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid rgba(90,30,4,0.18);
+    line-height: 1.5;
+  }
+  .proof-table thead th {
+    font-size: 10px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    font-weight: var(--fw-bold);
+    color: #5a1a04;
+    background: rgba(255,250,232,0.55);
+    border-bottom: 1px solid rgba(90,30,4,0.40);
+  }
+  .proof-table tbody tr:last-child td { border-bottom: 0; }
+  .proof-table .cat {
+    font-weight: var(--fw-bold);
+    color: #5a1a04;
+    width: 32%;
+    white-space: normal;
+  }
+  .proof-table .desc { color: #1a1208; }
+  .proof-table .desc strong { color: #000; font-weight: var(--fw-bold); }
+
+  /* OWASP "out of scope" line */
+  .proof-subline {
+    margin-top: 32px;
+    font-size: 14px; line-height: 1.6;
+    color: #3a2a14;
+    max-width: 90ch;
+    font-style: italic;
+  }
+
+  /* Internal divider (OWASP → Packs inside coverage section) */
+  .proof-divider {
+    margin: 96px 0 0;
+    padding-top: 72px;
+    border-top: 1px solid rgba(90,30,4,0.30);
+  }
+  .proof-divider h3 {
+    font-weight: var(--fw-black);
+    font-size: 44px; line-height: 1;
+    letter-spacing: -0.02em;
+    color: #000;
+    margin: 0 0 16px;
+    max-width: 16ch;
+  }
+  .proof-divider h3 .copper { color: #8a3a08; }
+
+  /* Compliance packs grid */
+  .packs-grid {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: rgba(90,30,4,0.30);
+    border: 1px solid rgba(90,30,4,0.30);
+  }
+  .packs-grid .pack {
+    background: rgba(255,247,224,0.85);
+    padding: 28px 30px;
+    display: flex; flex-direction: column; gap: 10px;
+    min-height: 130px;
+  }
+  .packs-grid .pack .name {
+    font-weight: var(--fw-black);
+    font-size: 22px; line-height: 1.05;
+    letter-spacing: -0.005em;
+    color: #000;
+  }
+  .packs-grid .pack .for {
+    font-size: 14px; line-height: 1.5;
+    color: #1a1208;
+  }
+
+  /* Macrix Stack table — three columns (label, DevyonQ, Azael) */
+  .proof-table.stack-table .col-label {
+    width: 18%;
+    color: #5a1a04;
+    font-weight: var(--fw-bold);
+    font-size: 12px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .proof-table.stack-table .col-d,
+  .proof-table.stack-table .col-a { width: 41%; }
+  .proof-table.stack-table thead th.col-d,
+  .proof-table.stack-table thead th.col-a {
+    font-size: 20px;
+    text-transform: none;
+    letter-spacing: -0.005em;
+    font-weight: var(--fw-black);
+    color: #000;
+  }
+  .proof-table.stack-table thead th.col-a { color: var(--accent); }
+
+  /* Reference Configurations table */
+  .proof-table.configs-table .col-profile { width: 36%; font-weight: var(--fw-medium); color: #000; }
+  .proof-table.configs-table .col-scope {
+    width: 14%;
+    font-weight: var(--fw-black);
+    color: #5a1a04;
+    font-size: 18px;
+  }
+  .proof-table.configs-table .col-packs { width: 32%; color: #1a1208; }
+  .proof-table.configs-table .col-cur { width: 18%; color: #1a1208; }
+
+  @media (max-width: 980px) {
+    .proof-table { font-size: 13px; }
+    .proof-table th, .proof-table td { padding: 14px 14px; }
+    .packs-grid { grid-template-columns: 1fr; }
+    .proof-pull { font-size: 20px; }
+    .proof-divider h3 { font-size: 32px; }
+    .proof-divider { margin-top: 64px; padding-top: 48px; }
+  }
+</style>
 </head>
 <body>
 
@@ -2501,6 +2737,7 @@ h1, h2, h3, p { margin: 0; }
       <a href="#letter"><span lang="de">Der Brief</span><span lang="en">The Letter</span></a>
       <a href="#who"><span lang="de">Wer</span><span lang="en">Who</span></a>
       <a href="#sectors"><span lang="de">Branchen</span><span lang="en">Sectors</span></a>
+      <a href="#coverage"><span lang="de">Abdeckung</span><span lang="en">Coverage</span></a>
     </div>
     <div class="vigil">
       <span class="vigil-dot"></span>
@@ -3011,12 +3248,12 @@ h1, h2, h3, p { margin: 0; }
           and he never copies the manager unless asked.
         </p>
         <p class="pull" lang="de">
-          DAS IST DAS ARTEFAKT, DAS DEN 500K&nbsp;€&nbsp;DEAL SCHLIESST.<br/>
-          <strong>DER BRIEF IST DAS PRODUKT.</strong>
+          EIN BRIEF. EIN VORFALL.<br/>
+          <strong>EINE FRAGE, DIE NUR DER MENSCH BEANTWORTET.</strong>
         </p>
         <p class="pull" lang="en">
-          THIS IS THE ARTIFACT THAT CLOSES THE 500K&nbsp;€&nbsp;DEAL.<br/>
-          <strong>THE LETTER IS THE PRODUCT.</strong>
+          ONE LETTER. ONE INCIDENT.<br/>
+          <strong>ONE QUESTION ONLY THE HUMAN ANSWERS.</strong>
         </p>
       </div>
 
@@ -3125,6 +3362,82 @@ h1, h2, h3, p { margin: 0; }
   </div>
 </section>
 
+<!-- ============= RED-TEAM GATE ============= -->
+<section class="block gate" id="gate">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2 lang="de">Externe Adversarial-Prüfung.<br/><span class="copper">Vor jedem Pilot.</span></h2>
+        <h2 lang="en">External adversarial evaluation.<br/><span class="copper">Before every pilot.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Bevor Azael bei einem Kunden produktiv läuft, prüft eine externe Offensiv-Sicherheitsfirma den Decider gegen 50 bis 100 adversariale Prompts.
+      </p>
+      <p class="meta" lang="en">
+        Before Azael goes live at a customer, an external offensive-security firm tests the Decider against 50 to 100 adversarial prompts.
+      </p>
+    </div>
+
+    <p class="proof-body" lang="de">Vertragliche Bestehensbedingungen:</p>
+    <p class="proof-body" lang="en">Contractual pass criteria:</p>
+
+    <ul class="criteria-list">
+      <li lang="de">Unter 2 % Umgehungsrate bei Hochsicherheitskategorien (Patent-Kern, MIL-STD-Referenzen, regulierte personenbezogene Daten).</li>
+      <li lang="en">Under 2% bypass rate on high-severity categories (patent core, MIL-STD references, regulated personal data).</li>
+      <li lang="de">Unter 5 % Umgehungsrate insgesamt.</li>
+      <li lang="en">Under 5% bypass rate overall.</li>
+      <li lang="de">Null erfolgreiche „Azael abschalten“-Versuche über Konversation.</li>
+      <li lang="en">Zero successful "disable Azael" attempts through conversation.</li>
+    </ul>
+
+    <p class="proof-body spaced" lang="de">
+      Bei Nichtbestehen: Fix-und-Re-Test. Der Pilot startet nicht. Jährlicher Re-Test ist Teil des Audit-Pakets des Kunden.
+    </p>
+    <p class="proof-body spaced" lang="en">
+      On failure: fix-and-re-test. The pilot does not start. Annual re-test is part of the customer's audit package.
+    </p>
+
+    <p class="proof-pull" lang="de">Der Bericht gehört dem Kunden, nicht uns.</p>
+    <p class="proof-pull" lang="en">The report belongs to the customer, not us.</p>
+  </div>
+</section>
+
+<!-- ============= WORKS-COUNCIL BLUEPRINT ============= -->
+<section class="block blueprint" id="blueprint">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2 lang="de">Mitbestimmung ist<br/><span class="copper">keine Fußnote.</span></h2>
+        <h2 lang="en">Co-determination is<br/><span class="copper">not a footnote.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        In Deutschland ist die Einführung eines Systems, das Mitarbeiter-Prompts liest, mitbestimmungspflichtig nach §87(1) Nr. 6 BetrVG. Wir liefern den Bauplan mit.
+      </p>
+      <p class="meta" lang="en">
+        In Germany, introducing a system that reads employee prompts requires works-council co-determination under §87(1) no. 6 of the Works Constitution Act (BetrVG). We ship the blueprint.
+      </p>
+    </div>
+
+    <ul class="criteria-list">
+      <li lang="de">Vorlage einer Betriebsvereinbarung „KI-Nutzung und Schutz“.</li>
+      <li lang="en">Works agreement template "AI Usage and Protection."</li>
+      <li lang="de">DSFA-Rahmen nach Art. 35 DSGVO.</li>
+      <li lang="en">DPIA framework per Article 35 GDPR.</li>
+      <li lang="de">Architektonische Transparenz: Drei-Schichten-Offenlegung (Nutzer, Modell, CISO), Konversationskanal <code>@Azael:</code>, vertragliches Verbot disziplinarischer Nutzung der Logs.</li>
+      <li lang="en">Architectural transparency: three-layer disclosure (user, model, CISO), <code>@Azael:</code> conversational channel, contractual prohibition of disciplinary use of logs.</li>
+      <li lang="de">Mustertext für die Mitarbeiter-Information.</li>
+      <li lang="en">Workforce notification template.</li>
+    </ul>
+
+    <p class="proof-pull" lang="de">
+      Azael ist Schutz, keine Überwachung. Diese Unterscheidung steht im Design, nicht nur im Vertrag.
+    </p>
+    <p class="proof-pull" lang="en">
+      Azael is protection, not surveillance. That distinction is in the design, not just the contract.
+    </p>
+  </div>
+</section>
+
 <!-- ============= WHO IS AZAEL ============= -->
 <section class="block who" id="who">
   <div class="wrap">
@@ -3147,8 +3460,8 @@ h1, h2, h3, p { margin: 0; }
           <svg><use href="#sigil"/></svg>
           <div>
             <div class="name">Azael</div>
-            <div class="role" lang="de">Wächter · Spionageabwehr-Dämon</div>
-            <div class="role" lang="en">Watcher · Counter-Intelligence Daemon</div>
+            <div class="role" lang="de">Wächter · KI-Spionageabwehr</div>
+            <div class="role" lang="en">Watcher · AI Counter-Intelligence</div>
           </div>
         </div>
 
@@ -3266,6 +3579,127 @@ h1, h2, h3, p { margin: 0; }
   </div>
 </section>
 
+<!-- ============= OWASP COVERAGE + COMPLIANCE PACKS ============= -->
+<section class="block coverage" id="coverage">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2 lang="de">Was Azael<br/><span class="copper">abdeckt.</span></h2>
+        <h2 lang="en">What Azael<br/><span class="copper">covers.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Sicherheitsverantwortliche fragen nicht „ist es gut?“, sondern „welche OWASP-Kategorien deckt es ab?“. Wir antworten direkt.
+      </p>
+      <p class="meta" lang="en">
+        Security leaders don't ask "is it good?" They ask "which OWASP categories does it cover?" We answer directly.
+      </p>
+    </div>
+
+    <table class="proof-table" lang="de">
+      <thead>
+        <tr>
+          <th>Kategorie</th>
+          <th>Was Azael tut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cat">LLM02 Sensitive Information Disclosure</td>
+          <td class="desc"><strong>Kernfunktion.</strong> Mid-stream-Redaktion vor dem Modell.</td>
+        </tr>
+        <tr>
+          <td class="cat">LLM01 Prompt Injection</td>
+          <td class="desc">Decider mit defensivem System-Prompt, JSON-Schema-Zwang, Regel-Fallback.</td>
+        </tr>
+        <tr>
+          <td class="cat">LLM07 System Prompt Leakage</td>
+          <td class="desc">Der Konversationskanal kann Azael nie deaktivieren.</td>
+        </tr>
+        <tr>
+          <td class="cat">LLM08 Vector and Embedding Weaknesses</td>
+          <td class="desc">World Bible mit Berechtigungsebenen A1 bis A5, auditierter Zugriff.</td>
+        </tr>
+        <tr>
+          <td class="cat">LLM05 Improper Output Handling</td>
+          <td class="desc">Decider klassifiziert Eingaben. Zwei-Wege-Routing begrenzt Ausgabeexposition.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="proof-table" lang="en">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>What Azael does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cat">LLM02 Sensitive Information Disclosure</td>
+          <td class="desc"><strong>Core function.</strong> Mid-stream redaction before the model.</td>
+        </tr>
+        <tr>
+          <td class="cat">LLM01 Prompt Injection</td>
+          <td class="desc">Decider with defensive system prompt, JSON-schema constraint, rules-based fallback.</td>
+        </tr>
+        <tr>
+          <td class="cat">LLM07 System Prompt Leakage</td>
+          <td class="desc">The conversational channel can never disable Azael.</td>
+        </tr>
+        <tr>
+          <td class="cat">LLM08 Vector and Embedding Weaknesses</td>
+          <td class="desc">World Bible with A1 to A5 authority levels, audited access.</td>
+        </tr>
+        <tr>
+          <td class="cat">LLM05 Improper Output Handling</td>
+          <td class="desc">Decider classifies inputs. Two-path routing bounds output exposure.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="proof-subline" lang="de">
+      Nicht abgedeckt, ehrlich genannt: LLM03 Supply Chain, LLM04 Data and Model Poisoning, LLM06 Excessive Agency, LLM09 Misinformation, LLM10 Unbounded Consumption. Azael trainiert keine Modelle, ist kein Agent, betreibt keine Modell-Versorgungskette.
+    </p>
+    <p class="proof-subline" lang="en">
+      Out of scope, named honestly: LLM03 Supply Chain, LLM04 Data and Model Poisoning, LLM06 Excessive Agency, LLM09 Misinformation, LLM10 Unbounded Consumption. Azael does not train models, is not an agent, does not operate a model supply chain.
+    </p>
+
+    <div class="proof-divider">
+      <h3 lang="de">Vier vorgebaute<br/><span class="copper">Compliance-Pakete.</span></h3>
+      <h3 lang="en">Four pre-built<br/><span class="copper">compliance packs.</span></h3>
+      <p class="proof-body" lang="de">
+        Jedes Paket ist separat lizenziert. Inhalt: regulatorische Mappings auf die OWASP-LLM-Kategorien oben, Audit-Log-Vorlagen, Berichts-Templates, jährliche Updates bei Regulationsänderungen.
+      </p>
+      <p class="proof-body" lang="en">
+        Each pack is separately licensed. Contents: regulatory mappings onto the OWASP LLM categories above, audit-log templates, reporting templates, annual updates as regulations evolve.
+      </p>
+
+      <div class="packs-grid">
+        <div class="pack">
+          <div class="name">EU AI Act</div>
+          <div class="for" lang="de">Hochrisiko-KI-Systeme, Artikel 9 bis 15.</div>
+          <div class="for" lang="en">High-risk AI systems, Articles 9 to 15.</div>
+        </div>
+        <div class="pack">
+          <div class="name">GxP / GAMP-5</div>
+          <div class="for" lang="de">Pharma F&amp;E, klinische Studien, regulierte Fertigung.</div>
+          <div class="for" lang="en">Pharma R&amp;D, clinical trials, regulated manufacturing.</div>
+        </div>
+        <div class="pack">
+          <div class="name">BaFin MaRisk &amp; BAIT</div>
+          <div class="for" lang="de">Banken, Zahlungsdienste, Versicherungen.</div>
+          <div class="for" lang="en">Banks, payment services, insurers.</div>
+        </div>
+        <div class="pack">
+          <div class="name">BSI C5 &amp; IT-Grundschutz</div>
+          <div class="for" lang="de">KRITIS, öffentliche Hand, Verteidigung.</div>
+          <div class="for" lang="en">Critical infrastructure, public sector, defense.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============= FINAL CTA ============= -->
 <section class="final" id="contact">
   <div class="wrap inner">
@@ -3294,6 +3728,180 @@ h1, h2, h3, p { margin: 0; }
         <span class="arrow"></span>
       </a>
     </div>
+  </div>
+</section>
+
+<!-- ============= MACRIX AI GOVERNANCE STACK ============= -->
+<section class="block stack" id="stack">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2 lang="de">Azael ist<br/><span class="copper">die Laufzeit-Hälfte.</span></h2>
+        <h2 lang="en">Azael is<br/><span class="copper">the run-time half.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Die andere Hälfte ist DevyonQ. Manifest-basierte KI-Entwicklung für regulierte Branchen. Selbe Audit-Disziplin, selbe Compliance-Pakete. Getrennt verkauft, als Paar gedacht.
+      </p>
+      <p class="meta" lang="en">
+        The other half is DevyonQ. Manifest-driven AI development for regulated industries. Same audit discipline, same compliance packs. Sold separately, designed as a pair.
+      </p>
+    </div>
+
+    <table class="proof-table stack-table" lang="de">
+      <thead>
+        <tr>
+          <th class="col-label"></th>
+          <th class="col-d">DevyonQ</th>
+          <th class="col-a">Azael</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-label">Phase</td>
+          <td class="col-d">Build-Time</td>
+          <td class="col-a">Run-Time</td>
+        </tr>
+        <tr>
+          <td class="col-label">Verantwortliche</td>
+          <td class="col-d">CTO, Engineering, Compliance</td>
+          <td class="col-a">CISO, CCO, DPO</td>
+        </tr>
+        <tr>
+          <td class="col-label">Auslöser</td>
+          <td class="col-d">Neues KI-Projekt startet</td>
+          <td class="col-a">KI-Tools im Haus, Audit, Vorfall</td>
+        </tr>
+        <tr>
+          <td class="col-label">Form</td>
+          <td class="col-d">BPMN-Korridor, IPDD</td>
+          <td class="col-a">Audit-Stream, Echtzeit-Redaktion, Brief</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="proof-table stack-table" lang="en">
+      <thead>
+        <tr>
+          <th class="col-label"></th>
+          <th class="col-d">DevyonQ</th>
+          <th class="col-a">Azael</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-label">Phase</td>
+          <td class="col-d">Build-Time</td>
+          <td class="col-a">Run-Time</td>
+        </tr>
+        <tr>
+          <td class="col-label">Owner</td>
+          <td class="col-d">CTO, Engineering, Compliance</td>
+          <td class="col-a">CISO, CCO, DPO</td>
+        </tr>
+        <tr>
+          <td class="col-label">Trigger</td>
+          <td class="col-d">New AI project starts</td>
+          <td class="col-a">AI tools in-house, audit, incident</td>
+        </tr>
+        <tr>
+          <td class="col-label">Form</td>
+          <td class="col-d">BPMN corridor, IPDD</td>
+          <td class="col-a">Audit stream, real-time redaction, letter</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============= REFERENCE CONFIGURATIONS ============= -->
+<section class="block configs" id="configs">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2 lang="de">Vier Größenordnungen.<br/><span class="copper">Keine Preisliste.</span></h2>
+        <h2 lang="en">Four scales.<br/><span class="copper">No price list.</span></h2>
+      </div>
+      <p class="meta" lang="de">
+        Wir veröffentlichen keine Preise. Wir veröffentlichen, wie Kunden Azael einsetzen. So sehen Sie Ihre eigene Größenordnung vor dem ersten Gespräch.
+      </p>
+      <p class="meta" lang="en">
+        We don't publish prices. We publish how customers deploy Azael, so you can see your own scale before the first conversation.
+      </p>
+    </div>
+
+    <table class="proof-table configs-table" lang="de">
+      <thead>
+        <tr>
+          <th class="col-profile">Profil</th>
+          <th class="col-scope">In Scope</th>
+          <th class="col-packs">Pakete</th>
+          <th class="col-cur">Kuration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-profile">Mittelständische Bank, 3DS-Issuer</td>
+          <td class="col-scope">200</td>
+          <td class="col-packs">BaFin</td>
+          <td class="col-cur">Standard</td>
+        </tr>
+        <tr>
+          <td class="col-profile">Tier-1 europäische Bank</td>
+          <td class="col-scope">2&nbsp;500</td>
+          <td class="col-packs">BaFin + EU AI Act + BSI</td>
+          <td class="col-cur">Premium</td>
+        </tr>
+        <tr>
+          <td class="col-profile">Mittlere Pharma</td>
+          <td class="col-scope">800</td>
+          <td class="col-packs">GxP + EU AI Act</td>
+          <td class="col-cur">Standard</td>
+        </tr>
+        <tr>
+          <td class="col-profile">Großpharma</td>
+          <td class="col-scope">4&nbsp;000</td>
+          <td class="col-packs">GxP + EU AI Act + BaFin</td>
+          <td class="col-cur">Premium</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="proof-table configs-table" lang="en">
+      <thead>
+        <tr>
+          <th class="col-profile">Profile</th>
+          <th class="col-scope">In scope</th>
+          <th class="col-packs">Packs</th>
+          <th class="col-cur">Curation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-profile">Mid-market bank, 3DS issuer</td>
+          <td class="col-scope">200</td>
+          <td class="col-packs">BaFin</td>
+          <td class="col-cur">Standard</td>
+        </tr>
+        <tr>
+          <td class="col-profile">Tier-1 European bank</td>
+          <td class="col-scope">2,500</td>
+          <td class="col-packs">BaFin + EU AI Act + BSI</td>
+          <td class="col-cur">Premium</td>
+        </tr>
+        <tr>
+          <td class="col-profile">Mid-size pharma</td>
+          <td class="col-scope">800</td>
+          <td class="col-packs">GxP + EU AI Act</td>
+          <td class="col-cur">Standard</td>
+        </tr>
+        <tr>
+          <td class="col-profile">Large pharma</td>
+          <td class="col-scope">4,000</td>
+          <td class="col-packs">GxP + EU AI Act + BaFin</td>
+          <td class="col-cur">Premium</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
